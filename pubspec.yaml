@@ -1,7 +1,8 @@
 name: smb_connect
-description: "A new Flutter package project."
-version: 0.0.3
-homepage:
+description: "Native SMB/CIFS client library written in Dart for Dart"
+version: 0.0.5
+repository: https://github.com/vadia/smb_connect
+homepage: https://github.com/vadia/smb_connect
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
