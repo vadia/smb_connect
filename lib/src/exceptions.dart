@@ -9,7 +9,11 @@ typedef SmbUnsupportedOperationException = Exception;
 typedef SmbProtocolDecodingException = Exception;
 typedef SmbIOException = Exception;
 typedef SmbMalformedDataException = Exception;
-typedef SmbAuthException = Exception;
+
+class SmbAuthException extends SmbException {
+  SmbAuthException(super.message);
+}
+
 typedef SmbIllegalArgumentException = Exception;
 typedef SmbIllegalStateException = Exception;
 typedef SpnegoException = Exception;

@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/configuration.dart';
 import 'package:smb_connect/src/connect/impl/smb2/nego/smb2_negotiate_response.dart';
 import 'package:smb_connect/src/connect/impl/smb2/session/smb2_logoff_request.dart';
@@ -10,6 +9,7 @@ import 'package:smb_connect/src/connect/impl/smb2/smb2_constants.dart';
 import 'package:smb_connect/src/connect/impl/smb2/smb2_signing_digest.dart';
 import 'package:smb_connect/src/connect/smb_session.dart';
 import 'package:smb_connect/src/dialect_version.dart';
+import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/smb/request_param.dart';
 import 'package:smb_connect/src/smb/ssp_context.dart';
 import 'package:smb_connect/src/utils/extensions.dart';
@@ -24,13 +24,13 @@ class Smb2Session extends SmbSession {
     await transport.sendrecv(logoffReq);
   }
 
-  Future<void> setup() async {
+  Future<bool> setup() async {
     var res = await transport.ensureConnected();
     if (!res) {
       if (config.debugPrint) {
         print("Can't connect!");
       }
-      return;
+      return false;
     }
     var negoResp = transport.getNegotiatedResponse()! as Smb2NegotiateResponse;
 
@@ -82,7 +82,11 @@ class Smb2Session extends SmbSession {
       print("Smb session token2: ${token?.toHexString()}");
     }
     if (token == null) {
-      return;
+      final s = SmbException.getMessageByCode(response2.status);
+      throw SmbAuthException(s);
+      // print(object)
+      // throw SmbException("Signing enabled but no session key available");
+      // return false;
     }
 
     token = createToken(ctx, token);
@@ -123,7 +127,9 @@ class Smb2Session extends SmbSession {
           throw SmbException("Signing enabled but no session key available");
         }
       }
+      return true;
     }
+    return false;
   }
 
   SSPContext createContext(

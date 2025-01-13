@@ -73,6 +73,7 @@ abstract class SmbConnect {
     } else {
       connect = Smb2Connect(config, transport);
     }
+
     if (onDisconnect != null) {
       transport.onDisconnect = (_) {
         onDisconnect.call(connect);
@@ -112,7 +113,9 @@ abstract class SmbConnect {
   final Configuration configuration;
   final SmbTransport transport;
   final String host;
-  final Map<String, SmbTree> _trees = {};
+  final Map<String, SmbTree> _trees = {
+    //
+  };
 
   SmbConnect(
     this.configuration,

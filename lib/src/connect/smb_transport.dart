@@ -883,7 +883,8 @@ class SmbTransport {
       case NtStatus.NT_STATUS_ACCOUNT_DISABLED:
       case NtStatus.NT_STATUS_ACCOUNT_LOCKED_OUT:
       case NtStatus.NT_STATUS_TRUSTED_DOMAIN_FAILURE:
-        throw SmbAuthException(resp.getErrorCode());
+        throw SmbAuthException(
+            SmbException.getMessageByCode(resp.getErrorCode()));
       case 0xC00000BB: // NT_STATUS_NOT_SUPPORTED
         throw SmbUnsupportedOperationException();
       case NtStatus.NT_STATUS_PATH_NOT_COVERED:

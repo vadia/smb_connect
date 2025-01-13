@@ -17,8 +17,11 @@ abstract class SmbSession {
   Uint8List? preauthIntegrityHash;
   SMBSigningDigest? _digest;
 
-  SmbSession(this.config, this.transport, [Credentials? credentials])
-      : credentials = credentials ?? config.credentials;
+  SmbSession(
+    this.config,
+    this.transport, [
+    Credentials? credentials,
+  ]) : credentials = credentials ?? config.credentials;
 
   SMBSigningDigest? getDigest() {
     return _digest;

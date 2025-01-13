@@ -1,3 +1,6 @@
+## 0.0.6 Auth bug fix
+ - bug fixes "Unable to Determine connectAuth Connection Issues #1".
+
 ## 0.0.5 Initial release.
  - Initial package release.
  - Tested work form Smb2/Smb1.

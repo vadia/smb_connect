@@ -136,7 +136,8 @@ class Smb1Session extends SmbSession {
       if (response.isLoggedInAsGuest && //!config.isAllowGuestFallback() &&
           negoResp.getServerData().security != SmbConstants.SECURITY_SHARE &&
           !(credentials.isGuest() || credentials.isAnonymous())) {
-        throw SmbAuthException(NtStatus.NT_STATUS_LOGON_FAILURE);
+        throw SmbAuthException(
+            SmbException.getMessageByCode(NtStatus.NT_STATUS_LOGON_FAILURE));
       } else if (!credentials.isAnonymous() && response.isLoggedInAsGuest) {
         anonymous = true;
       }
@@ -237,7 +238,8 @@ class Smb1Session extends SmbSession {
 
     if (response.isLoggedInAsGuest && //!config.isAllowGuestFallback() &&
         !(credentials.isGuest() || credentials.isAnonymous())) {
-      throw SmbAuthException(NtStatus.NT_STATUS_LOGON_FAILURE);
+      throw SmbAuthException(
+          SmbException.getMessageByCode(NtStatus.NT_STATUS_LOGON_FAILURE));
     } else if (!credentials.isAnonymous() && response.isLoggedInAsGuest) {
       anonymous = true;
     }
