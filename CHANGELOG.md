@@ -1,3 +1,6 @@
+## 0.0.7 Auth bug fix
+ - smb1 auth bug fixes.
+
 ## 0.0.6 Auth bug fix
  - bug fixes "Unable to Determine connectAuth Connection Issues #1".
 

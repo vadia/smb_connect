@@ -46,14 +46,20 @@ class Smb1Session extends SmbSession {
       final ctx = credentials.createContext(config, tdomain, host,
           negoResp.getServerData().encryptionKey!, doSigning);
 
-      var nextToken =
+      var resp1 =
           await ntlmSSP(ctx, anonymous, doSigning, negoResp, Uint8List(0));
+      var nextToken = resp1?.blob;
       if (nextToken == null) {
-        return false;
+        var errorCode = resp1?.errorCode ?? NtStatus.NT_STATUS_LOGON_FAILURE;
+        throw SmbAuthException(SmbException.getMessageByCode(errorCode));
+        // return false;
       }
-      nextToken = await ntlmSSP(ctx, anonymous, doSigning, negoResp, nextToken);
+      var resp2 = await ntlmSSP(ctx, anonymous, doSigning, negoResp, nextToken);
+      nextToken = resp2?.blob;
       if (nextToken == null) {
-        return false;
+        var errorCode = resp2?.errorCode ?? NtStatus.NT_STATUS_LOGON_FAILURE;
+        throw SmbAuthException(SmbException.getMessageByCode(errorCode));
+        // return false;
       }
       nextToken = ctx.initSecContext(nextToken, 0, nextToken.length);
       if (ctx.isEstablished()) {
@@ -162,8 +168,12 @@ class Smb1Session extends SmbSession {
     }
   }
 
-  Future<Uint8List?> ntlmSSP(SSPContext ctx, bool anonymous, bool doSigning,
-      SmbComNegotiateResponse negoResp, Uint8List prevToken) async {
+  Future<SmbComSessionSetupAndXResponse?> ntlmSSP(
+      SSPContext ctx,
+      bool anonymous,
+      bool doSigning,
+      SmbComNegotiateResponse negoResp,
+      Uint8List prevToken) async {
     // final curToken = token;
     // if ( s != null ) {
     //     try {
@@ -247,6 +257,8 @@ class Smb1Session extends SmbSession {
     // if (ex != null) {
     //   throw ex;
     // }
+    // var s = SmbException.getMessageByCode(response.errorCode);
+    // print(s);
 
     uid = response.getUid();
     var digest = request.getDigest();
@@ -255,7 +267,7 @@ class Smb1Session extends SmbSession {
       // log.debug("Setting digest");
       setDigest(digest);
     }
-    return response.blob;
+    return response; //.blob;
   }
 
   @override
