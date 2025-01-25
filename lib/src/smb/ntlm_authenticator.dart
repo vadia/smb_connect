@@ -11,7 +11,7 @@ abstract class NtlmAuthenticator {
   String? url;
   SmbAuthException? sae;
 
-  /// Set the default <tt>NtlmAuthenticator</tt>. Once the default authenticator is set it cannot be changed. Calling
+  /// Set the default NtlmAuthenticator. Once the default authenticator is set it cannot be changed. Calling
   /// this metho again will have no effect.
   static void setDefault(NtlmAuthenticator a) {
     if (auth != null) {
@@ -40,10 +40,10 @@ abstract class NtlmAuthenticator {
   }
 
   /// An application extending this class must provide an implementation for this method that returns new user
-  /// credentials try try when accessing SMB resources described by the <tt>getRequestingURL</tt> and
-  /// <tt>getRequestingException</tt> methods.
-  /// If this method returns <tt>null</tt> the <tt>SmbAuthException</tt> that triggered the authenticator check will
-  /// simply be rethrown. The default implementation returns <tt>null</tt>.
+  /// credentials try try when accessing SMB resources described by the getRequestingURL and
+  /// getRequestingException methods.
+  /// If this method returns null the SmbAuthException that triggered the authenticator check will
+  /// simply be rethrown. The default implementation returns null.
   NtlmPasswordAuthenticator? getNtlmPasswordAuthentication() {
     return null;
   }

@@ -148,23 +148,21 @@ class NtlmPasswordAuthenticator implements Credentials {
   /// Returns the username.
   String getUsername() => username;
 
-  /// Returns the password in plain text or <tt>null</tt> if the raw password
-  /// hashes were used to construct this <tt>NtlmPasswordAuthentication</tt>
+  /// Returns the password in plain text or null if the raw password
+  /// hashes were used to construct this NtlmPasswordAuthentication
   /// object which will be the case when NTLM HTTP Authentication is
   /// used. There is no way to retrieve a users password in plain text unless
   /// it is supplied by the user at runtime.
   String getPassword() => password;
 
   /// Return the domain and username in the format:
-  /// <tt>domain\\username</tt>. This is equivalent to <tt>toString()</tt>.
+  /// domain\\username.
   // @override
   String getName() {
     // bool d = domain != null && domain.length() > 0;
     return domain.isNotEmpty ? "$domain\\$username" : username;
   }
 
-  /// Return the domain and username in the format:
-  /// <tt>domain\\username</tt>. This is equivalent to <tt>getName()</tt>.
   @override
   String toString() => getName();
 

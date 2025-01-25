@@ -124,25 +124,25 @@ abstract class SmbConstants {
 
   static const int FOREVER = -1;
 
-  /// When specified as the <tt>shareAccess</tt> constructor parameter,
+  /// When specified as the shareAccess constructor parameter,
   /// other SMB clients
   /// will not be permitted to access the target file and will receive "The
   /// file is being accessed by another process" message.
   static const int FILE_NO_SHARE = 0x00;
 
-  /// When specified as the <tt>shareAccess</tt> constructor parameter,
+  /// When specified as the shareAccess constructor parameter,
   /// other SMB clients will be permitted to read from the target file while
   /// this file is open. This constant may be logically OR'd with other share
   /// access flags.
   static const int FILE_SHARE_READ = 0x01;
 
-  /// When specified as the <tt>shareAccess</tt> constructor parameter,
+  /// When specified as the shareAccess constructor parameter,
   /// other SMB clients will be permitted to write to the target file while
   /// this file is open. This constant may be logically OR'd with other share
   /// access flags.
   static const int FILE_SHARE_WRITE = 0x02;
 
-  /// When specified as the <tt>shareAccess</tt> constructor parameter,
+  /// When specified as the shareAccess constructor parameter,
   /// other SMB clients will be permitted to delete the target file while
   /// this file is open. This constant may be logically OR'd with other share
   /// access flags.

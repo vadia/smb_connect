@@ -47,7 +47,7 @@ abstract class Configuration {
   /// OS string to report
   String get nativeOs;
 
-  /// Lanman string to report, default <tt>smb_connect</tt>
+  /// Lanman string to report, default smb_connect
   String get nativeLanman;
 
   /// receive buffer size, in bytes, default 65535
@@ -104,7 +104,7 @@ abstract class Configuration {
   /// custom flags2
   int get flags2;
 
-  /// OEM encoding to use, default <tt>Cp850</tt>
+  /// OEM encoding to use, default Cp850
   CharEncoding get oemEncoding;
 
   /// local timezone
