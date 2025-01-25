@@ -7,7 +7,7 @@ import 'package:smb_connect/src/connect/smb_util.dart';
 
 class Smb2CloseResponse extends ServerMessageBlock2Response
     implements SmbBasicFileInfo {
-  static const int SMB2_CLOSE_FLAG_POSTQUERY_ATTIB = 0x1;
+  static const int SMB2_CLOSE_FLAG_POSTQUERY_ATTRIB = 0x1;
 
   final Uint8List _fileId;
   final String _fileName;

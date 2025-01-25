@@ -5,13 +5,17 @@ import 'dart:typed_data';
 
 import 'package:mutex/mutex.dart';
 import 'package:smb_connect/src/buffer_cache.dart';
-import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/configuration.dart';
+import 'package:smb_connect/src/connect/common/common_server_message_block.dart';
+import 'package:smb_connect/src/connect/common/common_server_message_block_request.dart';
+import 'package:smb_connect/src/connect/common/common_server_message_block_response.dart';
+import 'package:smb_connect/src/connect/common/request.dart' as request2;
+import 'package:smb_connect/src/connect/common/smb_negotiation.dart';
+import 'package:smb_connect/src/connect/common/smb_negotiation_response.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_blank_response.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_negotiate.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_negotiate_response.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_read_and_x_response.dart';
-import 'package:smb_connect/src/connect/impl/smb1/server_message_block.dart';
 import 'package:smb_connect/src/connect/impl/smb1/smb_com_constants.dart';
 import 'package:smb_connect/src/connect/impl/smb1/trans/smb_com_transaction.dart';
 import 'package:smb_connect/src/connect/impl/smb1/trans/smb_com_transaction_response.dart';
@@ -24,13 +28,8 @@ import 'package:smb_connect/src/connect/transport/request.dart';
 import 'package:smb_connect/src/connect/transport/response.dart';
 import 'package:smb_connect/src/crypto/crypto.dart';
 import 'package:smb_connect/src/dialect_version.dart';
+import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/fixes/atomic_integer.dart';
-import 'package:smb_connect/src/connect/common/common_server_message_block.dart';
-import 'package:smb_connect/src/connect/common/common_server_message_block_request.dart';
-import 'package:smb_connect/src/connect/common/common_server_message_block_response.dart';
-import 'package:smb_connect/src/connect/common/request.dart' as request2;
-import 'package:smb_connect/src/connect/common/smb_negotiation.dart';
-import 'package:smb_connect/src/connect/common/smb_negotiation_response.dart';
 import 'package:smb_connect/src/smb/nt_status.dart';
 import 'package:smb_connect/src/smb/request_param.dart';
 import 'package:smb_connect/src/smb_constants.dart';
@@ -861,55 +860,55 @@ class SmbTransport {
     }
   }
 
-  bool _checkStatus(ServerMessageBlock req, ServerMessageBlock resp) {
-    bool cont = false;
-    if (resp.getErrorCode() == 0x30002) {
-      // if using DOS error codes this indicates a DFS referral
-      resp.setErrorCode(NtStatus.NT_STATUS_PATH_NOT_COVERED);
-    } else {
-      resp.setErrorCode(SmbException.getStatusByCode(resp.getErrorCode()));
-    }
-    switch (resp.getErrorCode()) {
-      case NtStatus.NT_STATUS_OK:
-        cont = true;
-        break;
-      case NtStatus.NT_STATUS_ACCESS_DENIED:
-      case NtStatus.NT_STATUS_WRONG_PASSWORD:
-      case NtStatus.NT_STATUS_LOGON_FAILURE:
-      case NtStatus.NT_STATUS_ACCOUNT_RESTRICTION:
-      case NtStatus.NT_STATUS_INVALID_LOGON_HOURS:
-      case NtStatus.NT_STATUS_INVALID_WORKSTATION:
-      case NtStatus.NT_STATUS_PASSWORD_EXPIRED:
-      case NtStatus.NT_STATUS_ACCOUNT_DISABLED:
-      case NtStatus.NT_STATUS_ACCOUNT_LOCKED_OUT:
-      case NtStatus.NT_STATUS_TRUSTED_DOMAIN_FAILURE:
-        throw SmbAuthException(
-            SmbException.getMessageByCode(resp.getErrorCode()));
-      case 0xC00000BB: // NT_STATUS_NOT_SUPPORTED
-        throw SmbUnsupportedOperationException();
-      case NtStatus.NT_STATUS_PATH_NOT_COVERED:
-      // samba fails to report the proper status for some operations
-      case 0xC00000A2: // NT_STATUS_MEDIA_WRITE_PROTECTED
-        // FIXME: checkReferral(resp, req.getPath(), req);
-        break;
-      case NtStatus.NT_STATUS_BUFFER_OVERFLOW:
-        break; /* normal for DCERPC named pipes */
-      case NtStatus.NT_STATUS_MORE_PROCESSING_REQUIRED:
-        break; /* normal for NTLMSSP */
-      default:
-        // if (log.isDebugEnabled()) {
-        //   log.debug("Error code: 0x" +
-        //       Hexdump.toHexString(resp.getErrorCode(), 8) +
-        //       " for " +
-        //       req.getClass().getSimpleName());
-        // }
-        throw SmbException.code(resp.getErrorCode(), null);
-    }
-    if (resp.isVerifyFailed()) {
-      throw SmbException("Signature verification failed.");
-    }
-    return cont;
-  }
+  // bool _checkStatus(ServerMessageBlock req, ServerMessageBlock resp) {
+  //   bool cont = false;
+  //   if (resp.getErrorCode() == 0x30002) {
+  //     // if using DOS error codes this indicates a DFS referral
+  //     resp.setErrorCode(NtStatus.NT_STATUS_PATH_NOT_COVERED);
+  //   } else {
+  //     resp.setErrorCode(SmbException.getStatusByCode(resp.getErrorCode()));
+  //   }
+  //   switch (resp.getErrorCode()) {
+  //     case NtStatus.NT_STATUS_OK:
+  //       cont = true;
+  //       break;
+  //     case NtStatus.NT_STATUS_ACCESS_DENIED:
+  //     case NtStatus.NT_STATUS_WRONG_PASSWORD:
+  //     case NtStatus.NT_STATUS_LOGON_FAILURE:
+  //     case NtStatus.NT_STATUS_ACCOUNT_RESTRICTION:
+  //     case NtStatus.NT_STATUS_INVALID_LOGON_HOURS:
+  //     case NtStatus.NT_STATUS_INVALID_WORKSTATION:
+  //     case NtStatus.NT_STATUS_PASSWORD_EXPIRED:
+  //     case NtStatus.NT_STATUS_ACCOUNT_DISABLED:
+  //     case NtStatus.NT_STATUS_ACCOUNT_LOCKED_OUT:
+  //     case NtStatus.NT_STATUS_TRUSTED_DOMAIN_FAILURE:
+  //       throw SmbAuthException(
+  //           SmbException.getMessageByCode(resp.getErrorCode()));
+  //     case 0xC00000BB: // NT_STATUS_NOT_SUPPORTED
+  //       throw SmbUnsupportedOperationException();
+  //     case NtStatus.NT_STATUS_PATH_NOT_COVERED:
+  //     // samba fails to report the proper status for some operations
+  //     case 0xC00000A2: // NT_STATUS_MEDIA_WRITE_PROTECTED
+  //       // FIXME: checkReferral(resp, req.getPath(), req);
+  //       break;
+  //     case NtStatus.NT_STATUS_BUFFER_OVERFLOW:
+  //       break; /* normal for DCERPC named pipes */
+  //     case NtStatus.NT_STATUS_MORE_PROCESSING_REQUIRED:
+  //       break; /* normal for NTLMSSP */
+  //     default:
+  //       // if (log.isDebugEnabled()) {
+  //       //   log.debug("Error code: 0x" +
+  //       //       Hexdump.toHexString(resp.getErrorCode(), 8) +
+  //       //       " for " +
+  //       //       req.getClass().getSimpleName());
+  //       // }
+  //       throw SmbException.code(resp.getErrorCode(), null);
+  //   }
+  //   if (resp.isVerifyFailed()) {
+  //     throw SmbException("Signature verification failed.");
+  //   }
+  //   return cont;
+  // }
 
   @protected
   int getResponseTimeout(Request req) {

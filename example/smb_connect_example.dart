@@ -21,8 +21,13 @@ void main() async {
   List<SmbFile> files = await connect.listFiles(folder);
   print(files.map((e) => e.path).join(","));
 
-  // SmbFile file2 = await connect.createFile("/home/test2.txt");
-  // await connect.delete(file2);
+  SmbFile folder2 = await connect.createFolder("/home/folder");
+  assert(folder2.isDirectory());
+
+  SmbFile file2 = await connect.createFile("/home/folder/test2.txt");
+  assert(file2.isExists);
+
+  await connect.delete(folder2);
 
   // Create empty file
   SmbFile file = await connect.createFile("/home/test.txt");

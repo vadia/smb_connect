@@ -1,7 +1,12 @@
-## 0.0.7 Auth bug fix
+## 0.0.8 Add createFolder & bug fixes.
+ - Add createFolder operation.
+ - Bug fix. Operation listFiles did not close the folder.
+ - minnor bug fixes.
+
+## 0.0.7 Auth bug fix.
  - smb1 auth bug fixes.
 
-## 0.0.6 Auth bug fix
+## 0.0.6 Auth bug fix.
  - bug fixes "Unable to Determine connectAuth Connection Issues #1".
 
 ## 0.0.5 Initial release.

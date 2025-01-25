@@ -85,8 +85,10 @@ class Smb1FilesEnumerator extends SmbFilesEnumerator {
 
   @override
   Future<void> close() async {
+    // print("Close enumerator");
     final req = SmbComFindClose2(transport.config, _response.getSid());
     final resp = SmbComBlankResponse(transport.config);
+    tree.prepare(req);
     await transport.sendrecv(req, response: resp);
   }
 

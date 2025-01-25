@@ -77,7 +77,7 @@ Future<void> smbCloseFile(
   if (tree.transport.isSMB2()) {
     Smb2CloseRequest closeReq =
         Smb2CloseRequest(tree.config, fileId: fileId, fileName: file.uncPath);
-    closeReq.setCloseFlags(Smb2CloseResponse.SMB2_CLOSE_FLAG_POSTQUERY_ATTIB);
+    closeReq.setCloseFlags(Smb2CloseResponse.SMB2_CLOSE_FLAG_POSTQUERY_ATTRIB);
     tree.prepare(closeReq);
     await tree.transport.sendrecv(closeReq, params: {RequestParam.NO_RETRY});
   } else {

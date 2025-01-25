@@ -2,9 +2,17 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/connect/dcerpc.dart';
+import 'package:smb_connect/src/connect/fscc/file_rename_information2.dart';
+import 'package:smb_connect/src/connect/fscc/smb_basic_file_info.dart';
+import 'package:smb_connect/src/connect/impl/smb2/create/smb2_close_request.dart';
+import 'package:smb_connect/src/connect/impl/smb2/create/smb2_close_response.dart';
+import 'package:smb_connect/src/connect/impl/smb2/create/smb2_create_request.dart';
+import 'package:smb_connect/src/connect/impl/smb2/create/smb2_create_response.dart';
 import 'package:smb_connect/src/connect/impl/smb2/dcerpc.dart';
+import 'package:smb_connect/src/connect/impl/smb2/info/smb2_set_info_request.dart';
+import 'package:smb_connect/src/connect/impl/smb2/server_message_block2.dart';
+import 'package:smb_connect/src/connect/impl/smb2/smb2_constants.dart';
 import 'package:smb_connect/src/connect/impl/smb2/smb2_files_enumerator.dart';
 import 'package:smb_connect/src/connect/impl/smb2/smb2_random_access_file_controller.dart';
 import 'package:smb_connect/src/connect/impl/smb2/smb2_session.dart';
@@ -16,15 +24,7 @@ import 'package:smb_connect/src/connect/smb_file_stream.dart';
 import 'package:smb_connect/src/connect/smb_random_access_file.dart';
 import 'package:smb_connect/src/connect/smb_tree.dart';
 import 'package:smb_connect/src/dcerpc/msrpc/msrpc_share_enum.dart';
-import 'package:smb_connect/src/connect/fscc/file_rename_information2.dart';
-import 'package:smb_connect/src/connect/impl/smb2/create/smb2_close_request.dart';
-import 'package:smb_connect/src/connect/impl/smb2/create/smb2_close_response.dart';
-import 'package:smb_connect/src/connect/impl/smb2/create/smb2_create_request.dart';
-import 'package:smb_connect/src/connect/impl/smb2/create/smb2_create_response.dart';
-import 'package:smb_connect/src/connect/impl/smb2/info/smb2_set_info_request.dart';
-import 'package:smb_connect/src/connect/impl/smb2/server_message_block2.dart';
-import 'package:smb_connect/src/connect/impl/smb2/smb2_constants.dart';
-import 'package:smb_connect/src/connect/fscc/smb_basic_file_info.dart';
+import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/smb/nt_status.dart';
 import 'package:smb_connect/src/smb_constants.dart';
 import 'package:smb_connect/src/utils/extensions.dart';
@@ -33,8 +33,14 @@ class Smb2Connect extends SmbConnect {
   Smb2Connect(super.configuration, super.transport);
 
   @override
-  SmbTree initTree(String share) {
+  Smb2Session initSession() {
     var session = Smb2Session(transport.config, transport);
+    return session;
+  }
+
+  @override
+  SmbTree initTree(String share) {
+    var session = initSession();
     var tree = Smb2Tree(transport, session, share, null);
     return tree;
   }
@@ -63,7 +69,7 @@ class Smb2Connect extends SmbConnect {
 
     Smb2CloseRequest closeReq =
         Smb2CloseRequest(configuration, fileName: uncPath);
-    closeReq.setCloseFlags(Smb2CloseResponse.SMB2_CLOSE_FLAG_POSTQUERY_ATTIB);
+    closeReq.setCloseFlags(Smb2CloseResponse.SMB2_CLOSE_FLAG_POSTQUERY_ATTRIB);
     if (cmd != null) {
       createReq.chain(cmd);
       cmd.chain(closeReq);
@@ -93,11 +99,7 @@ class Smb2Connect extends SmbConnect {
         desiredAccess: desiredAccess,
         shareAccess: shareAccess);
 
-    if (createResp.status == NtStatus.NT_STATUS_NO_SUCH_DEVICE ||
-        createResp.status == NtStatus.NT_STATUS_NO_SUCH_FILE ||
-        createResp.status == NtStatus.NT_STATUS_OBJECT_NAME_NOT_FOUND ||
-        createResp.status == NtStatus.NT_STATUS_OBJECT_PATH_NOT_FOUND ||
-        createResp.status == NtStatus.NT_STATUS_NETWORK_NAME_DELETED) {
+    if (SmbConnect.responseStatusNotFound(createResp.status)) {
       return SmbFile.notExists(path, uncPath, share);
     }
     if (createResp.status != NtStatus.NT_STATUS_OK) {
@@ -109,7 +111,7 @@ class Smb2Connect extends SmbConnect {
     SmbBasicFileInfo info;
     if (closeResp != null &&
         (closeResp.getCloseFlags() &
-                Smb2CloseResponse.SMB2_CLOSE_FLAG_POSTQUERY_ATTIB) !=
+                Smb2CloseResponse.SMB2_CLOSE_FLAG_POSTQUERY_ATTRIB) !=
             0) {
       info = closeResp;
     } else {
@@ -139,6 +141,18 @@ class Smb2Connect extends SmbConnect {
         fileAttributes: SmbConstants.ATTR_NORMAL,
         desiredAccess: SmbConstants.O_RDWR,
         shareAccess: 0);
+  }
+
+  @override
+  Future<SmbFile> createFolder(String path) async {
+    return await openCloseFile(
+      path: path,
+      createDisposition: Smb2Constants.FILE_OPEN_IF,
+      createOptions: Smb2Constants.FILE_DIRECTORY_FILE,
+      fileAttributes: SmbConstants.ATTR_DIRECTORY,
+      desiredAccess: SmbConstants.O_RDWR,
+      shareAccess: SmbConstants.FILE_NO_SHARE,
+    );
   }
 
   @override
@@ -254,6 +268,7 @@ class Smb2Connect extends SmbConnect {
         res.addAll(mapFileEntries(folder, entries));
       }
     }
+    await enumerator.close();
     return res;
   }
 

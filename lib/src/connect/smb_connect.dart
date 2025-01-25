@@ -7,12 +7,14 @@ import 'package:smb_connect/src/configuration.dart';
 import 'package:smb_connect/src/connect/impl/smb1/smb1_connect.dart';
 import 'package:smb_connect/src/connect/impl/smb2/smb2_connect.dart';
 import 'package:smb_connect/src/connect/smb_file.dart';
+import 'package:smb_connect/src/connect/smb_session.dart';
 import 'package:smb_connect/src/connect/smb_transport.dart';
 import 'package:smb_connect/src/connect/smb_tree.dart';
 import 'package:smb_connect/src/credentials.dart';
 import 'package:smb_connect/src/dialect_version.dart';
 import 'package:smb_connect/src/smb/authentication_type.dart';
 import 'package:smb_connect/src/smb/file_entry.dart';
+import 'package:smb_connect/src/smb/nt_status.dart';
 import 'package:smb_connect/src/smb/ntlm_password_authenticator.dart';
 import 'package:smb_connect/src/utils/base.dart';
 import 'package:smb_connect/src/utils/extensions.dart';
@@ -73,6 +75,8 @@ abstract class SmbConnect {
     } else {
       connect = Smb2Connect(config, transport);
     }
+    // final session = connect.initSession();
+    await connect.listShares();
 
     if (onDisconnect != null) {
       transport.onDisconnect = (_) {
@@ -112,15 +116,14 @@ abstract class SmbConnect {
 
   final Configuration configuration;
   final SmbTransport transport;
-  final String host;
-  final Map<String, SmbTree> _trees = {
-    //
-  };
 
-  SmbConnect(
-    this.configuration,
-    this.transport,
-  ) : host = transport.host;
+  final String host;
+  SmbSession? session;
+  final Map<String, SmbTree> _trees = {};
+
+  SmbConnect(this.configuration, this.transport) : host = transport.host;
+
+  SmbSession initSession();
 
   SmbTree initTree(String share);
 
@@ -154,6 +157,8 @@ abstract class SmbConnect {
   }
 
   Future<SmbFile> createFile(String path);
+
+  Future<SmbFile> createFolder(String path);
 
   Future<SmbFile> delete(SmbFile file);
 
@@ -208,6 +213,14 @@ abstract class SmbConnect {
     } else {
       return path.beforeToken('/');
     }
+  }
+
+  static bool responseStatusNotFound(int status) {
+    return status == NtStatus.NT_STATUS_NO_SUCH_DEVICE ||
+        status == NtStatus.NT_STATUS_NO_SUCH_FILE ||
+        status == NtStatus.NT_STATUS_OBJECT_NAME_NOT_FOUND ||
+        status == NtStatus.NT_STATUS_OBJECT_PATH_NOT_FOUND ||
+        status == NtStatus.NT_STATUS_NETWORK_NAME_DELETED;
   }
 
   static const IPC_SHARE = "IPC\$";

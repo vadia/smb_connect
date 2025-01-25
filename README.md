@@ -32,6 +32,12 @@ See [example](example/) directory for examples and usage.
     print(files.map((e) => e.path));
 ```
 
+#### Create folder
+
+```dart
+    SmbFile folder = await connect.createFolder("/public/folder");
+```
+
 #### Create empty file
 
 ```dart
@@ -89,3 +95,7 @@ See [example](example/) directory for examples and usage.
 ```dart
     await connect.close();
 ```
+
+### Known issues
+
+ - Flutter version ~3.22.x build broken release version (for ios checked). Solution: upgrade flutter to version ~3.27.x.

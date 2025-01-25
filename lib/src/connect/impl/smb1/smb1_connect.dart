@@ -3,20 +3,11 @@ import 'dart:typed_data';
 
 import 'package:smb_connect/smb_connect.dart';
 import 'package:smb_connect/src/connect/dcerpc.dart';
-import 'package:smb_connect/src/connect/impl/smb1/dcerpc.dart';
-import 'package:smb_connect/src/connect/impl/smb1/smb1_files_enumerator.dart';
-import 'package:smb_connect/src/connect/impl/smb1/smb1_random_access_file_controller.dart';
-import 'package:smb_connect/src/connect/impl/smb1/smb1_session.dart';
-import 'package:smb_connect/src/connect/impl/smb1/smb1_stream_consumer.dart';
-import 'package:smb_connect/src/connect/impl/smb1/smb1_tree.dart';
-import 'package:smb_connect/src/connect/smb_file_stream.dart';
-import 'package:smb_connect/src/connect/smb_random_access_file.dart';
-import 'package:smb_connect/src/connect/smb_tree.dart';
-import 'package:smb_connect/src/dcerpc/msrpc/msrpc_share_enum.dart';
 import 'package:smb_connect/src/connect/fscc/file_information.dart';
 import 'package:smb_connect/src/connect/fscc/file_standard_info.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_blank_response.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_close.dart';
+import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_create_directory.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_delete.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_delete_directory.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_negotiate_response.dart';
@@ -27,9 +18,20 @@ import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_open_and_x_respons
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_query_information.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_query_information_response.dart';
 import 'package:smb_connect/src/connect/impl/smb1/com/smb_com_rename.dart';
+import 'package:smb_connect/src/connect/impl/smb1/dcerpc.dart';
 import 'package:smb_connect/src/connect/impl/smb1/server_message_block.dart';
+import 'package:smb_connect/src/connect/impl/smb1/smb1_files_enumerator.dart';
+import 'package:smb_connect/src/connect/impl/smb1/smb1_random_access_file_controller.dart';
+import 'package:smb_connect/src/connect/impl/smb1/smb1_session.dart';
+import 'package:smb_connect/src/connect/impl/smb1/smb1_stream_consumer.dart';
+import 'package:smb_connect/src/connect/impl/smb1/smb1_tree.dart';
 import 'package:smb_connect/src/connect/impl/smb1/trans2/trans2_query_path_information.dart';
 import 'package:smb_connect/src/connect/impl/smb1/trans2/trans2_query_path_information_response.dart';
+import 'package:smb_connect/src/connect/smb_file_stream.dart';
+import 'package:smb_connect/src/connect/smb_random_access_file.dart';
+import 'package:smb_connect/src/connect/smb_tree.dart';
+import 'package:smb_connect/src/dcerpc/msrpc/msrpc_share_enum.dart';
+import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/smb/request_param.dart';
 import 'package:smb_connect/src/smb_constants.dart';
 
@@ -37,8 +39,14 @@ class Smb1Connect extends SmbConnect {
   Smb1Connect(super.configuration, super.transport);
 
   @override
-  SmbTree initTree(String share) {
+  Smb1Session initSession() {
     var session = Smb1Session(transport.config, transport);
+    return session;
+  }
+
+  @override
+  SmbTree initTree(String share) {
+    var session = initSession();
     var tree = Smb1Tree(transport, session, share, null);
     return tree;
   }
@@ -68,11 +76,12 @@ class Smb1Connect extends SmbConnect {
 
       await transport.sendrecvComTransaction(request, response);
       final info = response.getInfo() as FileStandardInfo?;
-      // BasicFileInformation?;
-      if (info != null) {
-        return SmbFile.info(path, uncPath, share, info);
-      } else {
+
+      if (info == null ||
+          SmbConnect.responseStatusNotFound(response.errorCode)) {
         return SmbFile.notExists(path, uncPath, share);
+      } else {
+        return SmbFile.info(path, uncPath, share, info);
       }
     } else {
       //
@@ -107,6 +116,24 @@ class Smb1Connect extends SmbConnect {
   }
 
   @override
+  Future<SmbFile> createFolder(String path) async {
+    String share = SmbConnect.getShare(path);
+    var uncPath = SmbConnect.getUncPath(path);
+    SmbTree tree = await shareTree(share);
+
+    var req = SmbComCreateDirectory(configuration, uncPath);
+    var resp = SmbComBlankResponse(configuration);
+
+    tree.prepare(req);
+    await tree.transport.sendrecv(req, response: resp);
+
+    if (resp.errorCode != 0) {
+      throw "Can't create folder $path: ${SmbException.getMessageByCode(resp.errorCode)}";
+    }
+    return file(path);
+  }
+
+  @override
   Future<SmbFile> delete(SmbFile file) async {
     if (!file.canWrite()) {
       throw "Access denied";
@@ -129,7 +156,7 @@ class Smb1Connect extends SmbConnect {
     await transport.sendrecv(req, response: resp);
 
     if (resp.errorCode != 0) {
-      throw "Can't delete file ${file.path}";
+      throw "Can't delete ${file.path}: ${SmbException.getMessageByCode(resp.errorCode)}";
     }
     return SmbFile.notExists(file.path, file.uncPath, file.share);
     // throw SmbException.getMessageByCode(req.status);
@@ -210,6 +237,7 @@ class Smb1Connect extends SmbConnect {
         res.addAll(nextFiles);
       }
     }
+    await enumerator.close();
     return res;
   }
 
@@ -221,9 +249,10 @@ class Smb1Connect extends SmbConnect {
     required int access,
     required int sharing,
     required int attrs,
+    int options = 0,
   }) async {
     SmbTree tree = await shareTree(share);
-    int options = 0;
+
     int fid;
     SmbFile file;
     if (isCapabilitiyNtSMBS()) {
@@ -231,7 +260,7 @@ class Smb1Connect extends SmbConnect {
           SmbComNTCreateAndXResponse(configuration);
       SmbComNTCreateAndX req = SmbComNTCreateAndX(configuration, uncPath,
           openFlags, access, sharing, attrs, options, null);
-      // customizeCreate(req, resp);
+
       tree.prepare(req);
       await tree.transport.sendrecv(req, response: resp);
 

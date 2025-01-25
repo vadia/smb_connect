@@ -1,6 +1,6 @@
 name: smb_connect
 description: "Native SMB/CIFS client library written in Dart for Dart. Extremely fast, can be used for streaming music and video. Supported dialects: SMB 1.0, CIFS, SMB 2.0, SMB 2.1."
-version: 0.0.7
+version: 0.0.8
 repository: https://github.com/vadia/smb_connect
 homepage: https://github.com/vadia/smb_connect
 
