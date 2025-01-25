@@ -8,11 +8,11 @@ class NdrLong extends NdrObject {
 
   @override
   void encode(NdrBuffer dst) {
-    dst.enc_ndr_long(value);
+    dst.encNdrLong(value);
   }
 
   @override
   void decode(NdrBuffer src) {
-    value = src.dec_ndr_long();
+    value = src.decNdrLong();
   }
 }

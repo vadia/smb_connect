@@ -34,7 +34,7 @@ abstract class SmbComTransactionResponse extends ServerMessageBlock
   int subCommand;
   bool hasMore = true;
   bool isPrimary = true;
-  Uint8List? txn_buf;
+  Uint8List? txnBuf;
 
   /// for doNetEnum and doFindFirstNext */
   int status = 0;
@@ -44,12 +44,12 @@ abstract class SmbComTransactionResponse extends ServerMessageBlock
   SmbComTransactionResponse(super.config, {super.command, this.subCommand = 0});
 
   void setBuffer(Uint8List buffer) {
-    txn_buf = buffer;
+    txnBuf = buffer;
   }
 
   Uint8List? releaseBuffer() {
-    Uint8List? buf = txn_buf;
-    txn_buf = null;
+    Uint8List? buf = txnBuf;
+    txnBuf = null;
     return buf;
   }
 
@@ -140,7 +140,7 @@ abstract class SmbComTransactionResponse extends ServerMessageBlock
       byteArrayCopy(
           src: buffer,
           srcOffset: bufferIndex,
-          dst: txn_buf!,
+          dst: txnBuf!,
           dstOffset: bufParameterStart + parameterDisplacement,
           length: parameterCount);
       bufferIndex += parameterCount;
@@ -150,7 +150,7 @@ abstract class SmbComTransactionResponse extends ServerMessageBlock
       byteArrayCopy(
           src: buffer,
           srcOffset: bufferIndex,
-          dst: txn_buf!,
+          dst: txnBuf!,
           dstOffset: bufDataStart + dataDisplacement,
           length: dataCount);
       bufferIndex += dataCount;
@@ -170,9 +170,8 @@ abstract class SmbComTransactionResponse extends ServerMessageBlock
     }
 
     if (_parametersDone && _dataDone) {
-      readParametersWireFormat(
-          txn_buf!, bufParameterStart, totalParameterCount);
-      readDataWireFormat(txn_buf!, bufDataStart, totalDataCount);
+      readParametersWireFormat(txnBuf!, bufParameterStart, totalParameterCount);
+      readDataWireFormat(txnBuf!, bufDataStart, totalDataCount);
       hasMore = false;
     }
 

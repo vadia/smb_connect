@@ -40,7 +40,7 @@ class KDFCounterBytesGenerator {
   final int h;
   // fields set by init
   Uint8List? _fixedInputDataCtrPrefix;
-  Uint8List? _fixedInputData_afterCtr;
+  Uint8List? _fixedInputDataAfterCtr;
   int maxSizeExcl = 0;
   // ios is i defined as an octet string (the binary representation)
   late Uint8List _ios;
@@ -68,7 +68,7 @@ class KDFCounterBytesGenerator {
     // --- set arguments ---
 
     _fixedInputDataCtrPrefix = kdfParams.getFixedInputDataCounterPrefix();
-    _fixedInputData_afterCtr = kdfParams.getFixedInputDataCounterSuffix();
+    _fixedInputDataAfterCtr = kdfParams.getFixedInputDataCounterSuffix();
 
     int r = kdfParams.getR();
     _ios = Uint8List(r ~/ 8);
@@ -145,7 +145,7 @@ class KDFCounterBytesGenerator {
     // special case for K(0): K(0) is empty, so no update
     prf.update(_fixedInputDataCtrPrefix!, 0, _fixedInputDataCtrPrefix!.length);
     prf.update(_ios, 0, _ios.length);
-    prf.update(_fixedInputData_afterCtr!, 0, _fixedInputData_afterCtr!.length);
+    prf.update(_fixedInputDataAfterCtr!, 0, _fixedInputDataAfterCtr!.length);
     prf.doFinal(_k, 0);
   }
 }

@@ -18,8 +18,9 @@ import 'package:smb_connect/src/smb_constants.dart';
 class Smb1Session extends SmbSession {
   Smb1Session(super.config, super.transport, [super.credentials]);
 
+  @override
   Future<bool> setup(
-      ServerMessageBlock andx, ServerMessageBlock andxResponse) async {
+      {ServerMessageBlock? andx, ServerMessageBlock? andxResponse}) async {
     var res = await transport.ensureConnected();
     if (!res) {
       if (config.debugPrint) {

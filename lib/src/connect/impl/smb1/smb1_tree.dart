@@ -28,7 +28,7 @@ class Smb1Tree extends SmbTree {
     var response = SmbComTreeConnectAndXResponse(config, null);
     var request = SmbComTreeConnectAndX(config.credentials, config,
         (nego as SmbComNegotiateResponse).getServerData(), unc, svc, null);
-    await _session.setup(request, response);
+    await _session.setup(andx: request, andxResponse: response);
 
     session.prepareRequest(request);
 

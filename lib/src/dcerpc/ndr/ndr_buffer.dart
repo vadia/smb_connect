@@ -90,67 +90,67 @@ class NdrBuffer {
     return n;
   }
 
-  void enc_ndr_small(int s) {
+  void encNdrSmall(int s) {
     buf[index] = (s & 0xFF);
     advance(1);
   }
 
-  int dec_ndr_small() {
+  int decNdrSmall() {
     int val = buf[index] & 0xFF;
     advance(1);
     return val;
   }
 
-  void enc_ndr_short(int s) {
+  void encNdrShort(int s) {
     align(2);
-    Encdec.enc_uint16le(s, buf, index);
+    Encdec.encUint16LE(s, buf, index);
     advance(2);
   }
 
-  int dec_ndr_short() {
+  int decNdrShort() {
     align(2);
-    int val = Encdec.dec_uint16le(buf, index);
+    int val = Encdec.decUint16LE(buf, index);
     advance(2);
     return val;
   }
 
-  void enc_ndr_long(int l) {
+  void encNdrLong(int l) {
     align(4);
-    Encdec.enc_uint32le(l, buf, index);
+    Encdec.encUint32LE(l, buf, index);
     advance(4);
   }
 
-  int dec_ndr_long() {
+  int decNdrLong() {
     align(4);
-    int val = Encdec.dec_uint32le(buf, index);
+    int val = Encdec.decUint32LE(buf, index);
     advance(4);
     return val;
   }
 
-  void enc_ndr_hyper(int h) {
+  void encNdrHyper(int h) {
     align(8);
-    Encdec.enc_uint64le(h, buf, index);
+    Encdec.encUint64LE(h, buf, index);
     advance(8);
   }
 
-  int dec_ndr_hyper() {
+  int decNdrHyper() {
     align(8);
-    int val = Encdec.dec_uint64le(buf, index);
+    int val = Encdec.decUint64LE(buf, index);
     advance(8);
     return val;
   }
 
   /* float */
   /* double */
-  void enc_ndr_string(String s) {
+  void encNdrString(String s) {
     align(4);
     int i = index;
     int len = s.length;
-    Encdec.enc_uint32le(len + 1, buf, i);
+    Encdec.encUint32LE(len + 1, buf, i);
     i += 4;
-    Encdec.enc_uint32le(0, buf, i);
+    Encdec.encUint32LE(0, buf, i);
     i += 4;
-    Encdec.enc_uint32le(len + 1, buf, i);
+    Encdec.encUint32LE(len + 1, buf, i);
     i += 4;
     byteArrayCopy(
         src: s.getUNIBytes(),
@@ -164,11 +164,11 @@ class NdrBuffer {
     advance(i - index);
   }
 
-  String? dec_ndr_string() {
+  String? decNdrString() {
     align(4);
     int i = index;
     String? val;
-    int len = Encdec.dec_uint32le(buf, i);
+    int len = Encdec.decUint32LE(buf, i);
     i += 12;
     if (len != 0) {
       len--;
@@ -200,18 +200,18 @@ class NdrBuffer {
     return e.referent;
   }
 
-  void enc_ndr_referent(Object? obj, int type) {
+  void encNdrReferent(Object? obj, int type) {
     if (obj == null) {
-      enc_ndr_long(0);
+      encNdrLong(0);
       return;
     }
     switch (type) {
       case 1: /* unique */
       case 3: /* ref */
-        enc_ndr_long(identityHashCode(obj));
+        encNdrLong(identityHashCode(obj));
         return;
       case 2: /* ptr */
-        enc_ndr_long(_getDceReferent(obj));
+        encNdrLong(_getDceReferent(obj));
         return;
     }
   }

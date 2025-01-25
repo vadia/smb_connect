@@ -1,4 +1,3 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers, avoid_renaming_method_parameters, camel_case_types
 import 'dart:typed_data';
 
 import 'package:smb_connect/src/exceptions.dart';
@@ -7,346 +6,338 @@ import '../dcerpc_message.dart';
 import '../ndr/ndr_buffer.dart';
 import '../ndr/ndr_object.dart';
 
-String srvsvc_getSyntax() {
+String srvsvcGetSyntax() {
   return "4b324fc8-1670-01d3-1278-5a47bf6ee188:3.0";
 }
 
-class srvsvc_ShareInfo0 extends NdrObject {
+class SrvsvcShareInfo0 extends NdrObject {
   String? netname;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_referent(netname, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrReferent(netname, 1);
 
     if (netname != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(netname!);
+      dst = dst.deferred;
+      dst.encNdrString(netname!);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    int _netnamep = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    int netnamep = src.decNdrLong();
 
-    if (_netnamep != 0) {
-      _src = _src.deferred;
-      netname = _src.dec_ndr_string();
+    if (netnamep != 0) {
+      src = src.deferred;
+      netname = src.decNdrString();
     }
   }
 }
 
-class srvsvc_ShareInfoCtr0 extends NdrObject {
+class SrvsvcShareInfoCtr0 extends NdrObject {
   int count = 0;
-  List<srvsvc_ShareInfo0>? array;
+  List<SrvsvcShareInfo0>? array;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(count);
-    _dst.enc_ndr_referent(array, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(array, 1);
 
     if (array != null) {
-      _dst = _dst.deferred;
-      int _arrays = count;
-      _dst.enc_ndr_long(_arrays);
-      int _arrayi = _dst.index;
-      _dst.advance(4 * _arrays);
+      dst = dst.deferred;
+      int arrays = count;
+      dst.encNdrLong(arrays);
+      int arrayi = dst.index;
+      dst.advance(4 * arrays);
 
-      _dst = _dst.derive(_arrayi);
-      for (int _i = 0; _i < _arrays; _i++) {
-        array![_i].encode(_dst);
+      dst = dst.derive(arrayi);
+      for (int i = 0; i < arrays; i++) {
+        array![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    count = _src.dec_ndr_long();
-    int _arrayp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    count = src.decNdrLong();
+    int arrayp = src.decNdrLong();
 
-    if (_arrayp != 0) {
-      _src = _src.deferred;
-      int _arrays = _src.dec_ndr_long();
-      int _arrayi = _src.index;
-      _src.advance(4 * _arrays);
+    if (arrayp != 0) {
+      src = src.deferred;
+      int arrays = src.decNdrLong();
+      int arrayi = src.index;
+      src.advance(4 * arrays);
 
       if (array == null) {
-        if (_arrays < 0 || _arrays > 0xFFFF) {
+        if (arrays < 0 || arrays > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        array = List.generate(
-            _arrays, (index) => srvsvc_ShareInfo0()); // ShareInfo0[_arrays];
+        array = List.generate(arrays, (index) => SrvsvcShareInfo0());
       }
-      _src = _src.derive(_arrayi);
-      for (int _i = 0; _i < _arrays; _i++) {
-        // if (array[_i] == null) {
-        //   array[_i] = ShareInfo0();
-        // }
-        array![_i].decode(_src);
+      src = src.derive(arrayi);
+      for (int i = 0; i < arrays; i++) {
+        array![i].decode(src);
       }
     }
   }
 }
 
-class srvsvc_ShareInfo1 extends NdrObject {
+class SrvsvcShareInfo1 extends NdrObject {
   String? netname;
   int type = 0;
   String? remark;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_referent(netname, 1);
-    _dst.enc_ndr_long(type);
-    _dst.enc_ndr_referent(remark, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrReferent(netname, 1);
+    dst.encNdrLong(type);
+    dst.encNdrReferent(remark, 1);
 
     if (netname != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(netname!);
+      dst = dst.deferred;
+      dst.encNdrString(netname!);
     }
     if (remark != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(remark!);
+      dst = dst.deferred;
+      dst.encNdrString(remark!);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    int _netnamep = _src.dec_ndr_long();
-    type = _src.dec_ndr_long();
-    int _remarkp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    int netnamep = src.decNdrLong();
+    type = src.decNdrLong();
+    int remarkp = src.decNdrLong();
 
-    if (_netnamep != 0) {
-      _src = _src.deferred;
-      netname = _src.dec_ndr_string();
+    if (netnamep != 0) {
+      src = src.deferred;
+      netname = src.decNdrString();
     }
-    if (_remarkp != 0) {
-      _src = _src.deferred;
-      remark = _src.dec_ndr_string();
+    if (remarkp != 0) {
+      src = src.deferred;
+      remark = src.decNdrString();
     }
   }
 }
 
-class srvsvc_ShareInfoCtr1 extends NdrObject {
+class SrvsvcShareInfoCtr1 extends NdrObject {
   int count = 0;
-  List<srvsvc_ShareInfo1>? array;
+  List<SrvsvcShareInfo1>? array;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(count);
-    _dst.enc_ndr_referent(array, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(array, 1);
 
     if (array != null) {
-      _dst = _dst.deferred;
-      int _arrays = count;
-      _dst.enc_ndr_long(_arrays);
-      int _arrayi = _dst.index;
-      _dst.advance(12 * _arrays);
+      dst = dst.deferred;
+      int arrays = count;
+      dst.encNdrLong(arrays);
+      int arrayi = dst.index;
+      dst.advance(12 * arrays);
 
-      _dst = _dst.derive(_arrayi);
-      for (int _i = 0; _i < _arrays; _i++) {
-        array![_i].encode(_dst);
+      dst = dst.derive(arrayi);
+      for (int i = 0; i < arrays; i++) {
+        array![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    count = _src.dec_ndr_long();
-    int _arrayp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    count = src.decNdrLong();
+    int arrayp = src.decNdrLong();
 
-    if (_arrayp != 0) {
-      _src = _src.deferred;
-      int _arrays = _src.dec_ndr_long();
-      int _arrayi = _src.index;
-      _src.advance(12 * _arrays);
+    if (arrayp != 0) {
+      src = src.deferred;
+      int arrays = src.decNdrLong();
+      int arrayi = src.index;
+      src.advance(12 * arrays);
 
       if (array == null) {
-        if (_arrays < 0 || _arrays > 0xFFFF) {
+        if (arrays < 0 || arrays > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
         array = List.generate(
-            _arrays, (index) => srvsvc_ShareInfo1()); // ShareInfo1[_arrays];
+            arrays, (index) => SrvsvcShareInfo1()); // ShareInfo1[arrays];
       }
-      _src = _src.derive(_arrayi);
-      for (int _i = 0; _i < _arrays; _i++) {
-        // if (array[_i] == null) {
-        //   array[_i] = ShareInfo1();
+      src = src.derive(arrayi);
+      for (int i = 0; i < arrays; i++) {
+        // if (array[i] == null) {
+        //   array[i] = ShareInfo1();
         // }
-        array![_i].decode(_src);
+        array![i].decode(src);
       }
     }
   }
 }
 
-class srvsvc_ShareInfo502 extends NdrObject {
+class SrvsvcShareInfo502 extends NdrObject {
   String? netname;
   int type = 0;
   String? remark;
   int permissions = 0;
-  int max_uses = 0;
-  int current_uses = 0;
+  int maxUses = 0;
+  int currentUses = 0;
   String? path;
   String? password;
-  int sd_size = 0;
-  Uint8List? security_descriptor;
+  int sdSize = 0;
+  Uint8List? securityDescriptor;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_referent(netname, 1);
-    _dst.enc_ndr_long(type);
-    _dst.enc_ndr_referent(remark, 1);
-    _dst.enc_ndr_long(permissions);
-    _dst.enc_ndr_long(max_uses);
-    _dst.enc_ndr_long(current_uses);
-    _dst.enc_ndr_referent(path, 1);
-    _dst.enc_ndr_referent(password, 1);
-    _dst.enc_ndr_long(sd_size);
-    _dst.enc_ndr_referent(security_descriptor, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrReferent(netname, 1);
+    dst.encNdrLong(type);
+    dst.encNdrReferent(remark, 1);
+    dst.encNdrLong(permissions);
+    dst.encNdrLong(maxUses);
+    dst.encNdrLong(currentUses);
+    dst.encNdrReferent(path, 1);
+    dst.encNdrReferent(password, 1);
+    dst.encNdrLong(sdSize);
+    dst.encNdrReferent(securityDescriptor, 1);
 
     if (netname != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(netname!);
+      dst = dst.deferred;
+      dst.encNdrString(netname!);
     }
     if (remark != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(remark!);
+      dst = dst.deferred;
+      dst.encNdrString(remark!);
     }
     if (path != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(path!);
+      dst = dst.deferred;
+      dst.encNdrString(path!);
     }
     if (password != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(password!);
+      dst = dst.deferred;
+      dst.encNdrString(password!);
     }
-    if (security_descriptor != null) {
-      _dst = _dst.deferred;
-      int _security_descriptors = sd_size;
-      _dst.enc_ndr_long(_security_descriptors);
-      int _security_descriptori = _dst.index;
-      _dst.advance(1 * _security_descriptors);
+    if (securityDescriptor != null) {
+      dst = dst.deferred;
+      int securityDescriptors = sdSize;
+      dst.encNdrLong(securityDescriptors);
+      int securityDescriptori = dst.index;
+      dst.advance(1 * securityDescriptors);
 
-      _dst = _dst.derive(_security_descriptori);
-      for (int _i = 0; _i < _security_descriptors; _i++) {
-        _dst.enc_ndr_small(security_descriptor![_i]);
+      dst = dst.derive(securityDescriptori);
+      for (int i = 0; i < securityDescriptors; i++) {
+        dst.encNdrSmall(securityDescriptor![i]);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    int _netnamep = _src.dec_ndr_long();
-    type = _src.dec_ndr_long();
-    int _remarkp = _src.dec_ndr_long();
-    permissions = _src.dec_ndr_long();
-    max_uses = _src.dec_ndr_long();
-    current_uses = _src.dec_ndr_long();
-    int _pathp = _src.dec_ndr_long();
-    int _passwordp = _src.dec_ndr_long();
-    sd_size = _src.dec_ndr_long();
-    int _security_descriptorp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    int netnamep = src.decNdrLong();
+    type = src.decNdrLong();
+    int remarkp = src.decNdrLong();
+    permissions = src.decNdrLong();
+    maxUses = src.decNdrLong();
+    currentUses = src.decNdrLong();
+    int pathp = src.decNdrLong();
+    int passwordp = src.decNdrLong();
+    sdSize = src.decNdrLong();
+    int securityDescriptorp = src.decNdrLong();
 
-    if (_netnamep != 0) {
-      _src = _src.deferred;
-      netname = _src.dec_ndr_string();
+    if (netnamep != 0) {
+      src = src.deferred;
+      netname = src.decNdrString();
     }
-    if (_remarkp != 0) {
-      _src = _src.deferred;
-      remark = _src.dec_ndr_string();
+    if (remarkp != 0) {
+      src = src.deferred;
+      remark = src.decNdrString();
     }
-    if (_pathp != 0) {
-      _src = _src.deferred;
-      path = _src.dec_ndr_string();
+    if (pathp != 0) {
+      src = src.deferred;
+      path = src.decNdrString();
     }
-    if (_passwordp != 0) {
-      _src = _src.deferred;
-      password = _src.dec_ndr_string();
+    if (passwordp != 0) {
+      src = src.deferred;
+      password = src.decNdrString();
     }
-    if (_security_descriptorp != 0) {
-      _src = _src.deferred;
-      int _security_descriptors = _src.dec_ndr_long();
-      int _security_descriptori = _src.index;
-      _src.advance(1 * _security_descriptors);
+    if (securityDescriptorp != 0) {
+      src = src.deferred;
+      int securityDescriptors = src.decNdrLong();
+      int securityDescriptori = src.index;
+      src.advance(1 * securityDescriptors);
 
-      if (security_descriptor == null) {
-        if (_security_descriptors < 0 || _security_descriptors > 0xFFFF) {
+      if (securityDescriptor == null) {
+        if (securityDescriptors < 0 || securityDescriptors > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        security_descriptor =
-            Uint8List(_security_descriptors); //[_security_descriptors];
+        securityDescriptor =
+            Uint8List(securityDescriptors); //[securityDescriptors];
       }
-      _src = _src.derive(_security_descriptori);
-      for (int _i = 0; _i < _security_descriptors; _i++) {
-        security_descriptor![_i] = _src.dec_ndr_small();
+      src = src.derive(securityDescriptori);
+      for (int i = 0; i < securityDescriptors; i++) {
+        securityDescriptor![i] = src.decNdrSmall();
       }
     }
   }
 }
 
-class srvsvc_ShareInfoCtr502 extends NdrObject {
+class SrvsvcShareInfoCtr502 extends NdrObject {
   int count = 0;
-  List<srvsvc_ShareInfo502>? array;
+  List<SrvsvcShareInfo502>? array;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(count);
-    _dst.enc_ndr_referent(array, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(array, 1);
 
     if (array != null) {
-      _dst = _dst.deferred;
-      int _arrays = count;
-      _dst.enc_ndr_long(_arrays);
-      int _arrayi = _dst.index;
-      _dst.advance(40 * _arrays);
+      dst = dst.deferred;
+      int arrays = count;
+      dst.encNdrLong(arrays);
+      int arrayi = dst.index;
+      dst.advance(40 * arrays);
 
-      _dst = _dst.derive(_arrayi);
-      for (int _i = 0; _i < _arrays; _i++) {
-        array![_i].encode(_dst);
+      dst = dst.derive(arrayi);
+      for (int i = 0; i < arrays; i++) {
+        array![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    count = _src.dec_ndr_long();
-    int _arrayp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    count = src.decNdrLong();
+    int arrayp = src.decNdrLong();
 
-    if (_arrayp != 0) {
-      _src = _src.deferred;
-      int _arrays = _src.dec_ndr_long();
-      int _arrayi = _src.index;
-      _src.advance(40 * _arrays);
+    if (arrayp != 0) {
+      src = src.deferred;
+      int arrays = src.decNdrLong();
+      int arrayi = src.index;
+      src.advance(40 * arrays);
 
       if (array == null) {
-        if (_arrays < 0 || _arrays > 0xFFFF) {
+        if (arrays < 0 || arrays > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        array = List.generate(_arrays,
-            (index) => srvsvc_ShareInfo502()); // ShareInfo502[_arrays];
+        array = List.generate(arrays, (index) => SrvsvcShareInfo502());
       }
-      _src = _src.derive(_arrayi);
-      for (int _i = 0; _i < _arrays; _i++) {
-        // if (array[_i] == null) {
-        //   array[_i] = ShareInfo502();
-        // }
-        array![_i].decode(_src);
+      src = src.derive(arrayi);
+      for (int i = 0; i < arrays; i++) {
+        array![i].decode(src);
       }
     }
   }
 }
 
-class srvsvc_ShareEnumAll extends DcerpcMessage {
+class SrvsvcShareEnumAll extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x0f;
@@ -358,46 +349,46 @@ class srvsvc_ShareEnumAll extends DcerpcMessage {
   NdrObject? info;
   int prefmaxlen;
   int totalentries;
-  int resume_handle;
+  int resumeHandle;
 
-  srvsvc_ShareEnumAll(this.servername, this.level, this.info, this.prefmaxlen,
-      this.totalentries, this.resume_handle);
+  SrvsvcShareEnumAll(this.servername, this.level, this.info, this.prefmaxlen,
+      this.totalentries, this.resumeHandle);
 
   @override
-  void encode_in(NdrBuffer _dst) {
-    _dst.enc_ndr_referent(servername, 1);
+  void encodeIn(NdrBuffer buf) {
+    buf.encNdrReferent(servername, 1);
     if (servername != null) {
-      _dst.enc_ndr_string(servername!);
+      buf.encNdrString(servername!);
     }
-    _dst.enc_ndr_long(level);
-    int _descr = level;
-    _dst.enc_ndr_long(_descr);
-    _dst.enc_ndr_referent(info, 1);
+    buf.encNdrLong(level);
+    int descr = level;
+    buf.encNdrLong(descr);
+    buf.encNdrReferent(info, 1);
     if (info != null) {
-      _dst = _dst.deferred;
-      info!.encode(_dst);
+      buf = buf.deferred;
+      info!.encode(buf);
     }
-    _dst.enc_ndr_long(prefmaxlen);
-    _dst.enc_ndr_long(resume_handle);
+    buf.encNdrLong(prefmaxlen);
+    buf.encNdrLong(resumeHandle);
   }
 
   @override
-  void decode_out(NdrBuffer _src) {
-    level = _src.dec_ndr_long();
-    _src.dec_ndr_long(); /* union discriminant */
-    int _infop = _src.dec_ndr_long();
-    if (_infop != 0) {
-      info ??= srvsvc_ShareInfoCtr0();
-      _src = _src.deferred;
-      info!.decode(_src);
+  void decodeOut(NdrBuffer buf) {
+    level = buf.decNdrLong();
+    buf.decNdrLong(); /* union discriminant */
+    int infop = buf.decNdrLong();
+    if (infop != 0) {
+      info ??= SrvsvcShareInfoCtr0();
+      buf = buf.deferred;
+      info!.decode(buf);
     }
-    totalentries = _src.dec_ndr_long();
-    resume_handle = _src.dec_ndr_long();
-    retval = _src.dec_ndr_long();
+    totalentries = buf.decNdrLong();
+    resumeHandle = buf.decNdrLong();
+    retval = buf.decNdrLong();
   }
 }
 
-class srvsvc_ShareGetInfo extends DcerpcMessage {
+class SrvsvcShareGetInfo extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x10;
@@ -409,61 +400,61 @@ class srvsvc_ShareGetInfo extends DcerpcMessage {
   int level;
   NdrObject? info;
 
-  srvsvc_ShareGetInfo(this.servername, this.sharename, this.level, this.info);
+  SrvsvcShareGetInfo(this.servername, this.sharename, this.level, this.info);
 
   @override
-  void encode_in(NdrBuffer _dst) {
-    _dst.enc_ndr_referent(servername, 1);
+  void encodeIn(NdrBuffer buf) {
+    buf.encNdrReferent(servername, 1);
     if (servername != null) {
-      _dst.enc_ndr_string(servername!);
+      buf.encNdrString(servername!);
     }
-    _dst.enc_ndr_string(sharename);
-    _dst.enc_ndr_long(level);
+    buf.encNdrString(sharename);
+    buf.encNdrLong(level);
   }
 
   @override
-  void decode_out(NdrBuffer _src) {
-    _src.dec_ndr_long(); /* union discriminant */
-    int _infop = _src.dec_ndr_long();
-    if (_infop != 0) {
-      info ??= srvsvc_ShareInfo0();
-      _src = _src.deferred;
-      info!.decode(_src);
+  void decodeOut(NdrBuffer buf) {
+    buf.decNdrLong(); /* union discriminant */
+    int infop = buf.decNdrLong();
+    if (infop != 0) {
+      info ??= SrvsvcShareInfo0();
+      buf = buf.deferred;
+      info!.decode(buf);
     }
-    retval = _src.dec_ndr_long();
+    retval = buf.decNdrLong();
   }
 }
 
-class srvsvc_ServerInfo100 extends NdrObject {
-  int platform_id = 0;
+class SrvsvcServerInfo100 extends NdrObject {
+  int platformId = 0;
   String? name;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(platform_id);
-    _dst.enc_ndr_referent(name, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(platformId);
+    dst.encNdrReferent(name, 1);
 
     if (name != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(name!);
+      dst = dst.deferred;
+      dst.encNdrString(name!);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    platform_id = _src.dec_ndr_long();
-    int _namep = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    platformId = src.decNdrLong();
+    int namep = src.decNdrLong();
 
-    if (_namep != 0) {
-      _src = _src.deferred;
-      name = _src.dec_ndr_string();
+    if (namep != 0) {
+      src = src.deferred;
+      name = src.decNdrString();
     }
   }
 }
 
-class srvsvc_ServerGetInfo extends DcerpcMessage {
+class SrvsvcServerGetInfo extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x15;
@@ -474,31 +465,31 @@ class srvsvc_ServerGetInfo extends DcerpcMessage {
   int level;
   NdrObject? info;
 
-  srvsvc_ServerGetInfo(this.servername, this.level, this.info);
+  SrvsvcServerGetInfo(this.servername, this.level, this.info);
 
   @override
-  void encode_in(NdrBuffer _dst) {
-    _dst.enc_ndr_referent(servername, 1);
+  void encodeIn(NdrBuffer buf) {
+    buf.encNdrReferent(servername, 1);
     if (servername != null) {
-      _dst.enc_ndr_string(servername!);
+      buf.encNdrString(servername!);
     }
-    _dst.enc_ndr_long(level);
+    buf.encNdrLong(level);
   }
 
   @override
-  void decode_out(NdrBuffer _src) {
-    _src.dec_ndr_long(); /* union discriminant */
-    int _infop = _src.dec_ndr_long();
-    if (_infop != 0) {
-      info ??= srvsvc_ServerInfo100();
-      _src = _src.deferred;
-      info!.decode(_src);
+  void decodeOut(NdrBuffer buf) {
+    buf.decNdrLong(); /* union discriminant */
+    int infop = buf.decNdrLong();
+    if (infop != 0) {
+      info ??= SrvsvcServerInfo100();
+      buf = buf.deferred;
+      info!.decode(buf);
     }
-    retval = _src.dec_ndr_long();
+    retval = buf.decNdrLong();
   }
 }
 
-class srvsvc_TimeOfDayInfo extends NdrObject {
+class SrvsvcTimeOfDayInfo extends NdrObject {
   int elapsedt = 0;
   int msecs = 0;
   int hours = 0;
@@ -513,41 +504,41 @@ class srvsvc_TimeOfDayInfo extends NdrObject {
   int weekday = 0;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(elapsedt);
-    _dst.enc_ndr_long(msecs);
-    _dst.enc_ndr_long(hours);
-    _dst.enc_ndr_long(mins);
-    _dst.enc_ndr_long(secs);
-    _dst.enc_ndr_long(hunds);
-    _dst.enc_ndr_long(timezone);
-    _dst.enc_ndr_long(tinterval);
-    _dst.enc_ndr_long(day);
-    _dst.enc_ndr_long(month);
-    _dst.enc_ndr_long(year);
-    _dst.enc_ndr_long(weekday);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(elapsedt);
+    dst.encNdrLong(msecs);
+    dst.encNdrLong(hours);
+    dst.encNdrLong(mins);
+    dst.encNdrLong(secs);
+    dst.encNdrLong(hunds);
+    dst.encNdrLong(timezone);
+    dst.encNdrLong(tinterval);
+    dst.encNdrLong(day);
+    dst.encNdrLong(month);
+    dst.encNdrLong(year);
+    dst.encNdrLong(weekday);
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    elapsedt = _src.dec_ndr_long();
-    msecs = _src.dec_ndr_long();
-    hours = _src.dec_ndr_long();
-    mins = _src.dec_ndr_long();
-    secs = _src.dec_ndr_long();
-    hunds = _src.dec_ndr_long();
-    timezone = _src.dec_ndr_long();
-    tinterval = _src.dec_ndr_long();
-    day = _src.dec_ndr_long();
-    month = _src.dec_ndr_long();
-    year = _src.dec_ndr_long();
-    weekday = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    elapsedt = src.decNdrLong();
+    msecs = src.decNdrLong();
+    hours = src.decNdrLong();
+    mins = src.decNdrLong();
+    secs = src.decNdrLong();
+    hunds = src.decNdrLong();
+    timezone = src.decNdrLong();
+    tinterval = src.decNdrLong();
+    day = src.decNdrLong();
+    month = src.decNdrLong();
+    year = src.decNdrLong();
+    weekday = src.decNdrLong();
   }
 }
 
-class srvsvc_RemoteTOD extends DcerpcMessage {
+class SrvsvcRemoteTOD extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x1c;
@@ -555,25 +546,25 @@ class srvsvc_RemoteTOD extends DcerpcMessage {
 
   int retval = 0;
   String? servername;
-  srvsvc_TimeOfDayInfo? info;
+  SrvsvcTimeOfDayInfo? info;
 
-  srvsvc_RemoteTOD(this.servername, this.info);
+  SrvsvcRemoteTOD(this.servername, this.info);
 
   @override
-  void encode_in(NdrBuffer _dst) {
-    _dst.enc_ndr_referent(servername, 1);
+  void encodeIn(NdrBuffer buf) {
+    buf.encNdrReferent(servername, 1);
     if (servername != null) {
-      _dst.enc_ndr_string(servername!);
+      buf.encNdrString(servername!);
     }
   }
 
   @override
-  void decode_out(NdrBuffer _src) {
-    int _infop = _src.dec_ndr_long();
-    if (_infop != 0) {
-      info ??= srvsvc_TimeOfDayInfo();
-      info!.decode(_src);
+  void decodeOut(NdrBuffer buf) {
+    int infop = buf.decNdrLong();
+    if (infop != 0) {
+      info ??= SrvsvcTimeOfDayInfo();
+      info!.decode(buf);
     }
-    retval = _src.dec_ndr_long();
+    retval = buf.decNdrLong();
   }
 }

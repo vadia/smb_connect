@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types, no_leading_underscores_for_local_identifiers, avoid_renaming_method_parameters
-
 import 'package:smb_connect/src/dcerpc/msrpc/srvsvc.dart';
 import 'package:smb_connect/src/smb/file_entry.dart';
 import 'package:smb_connect/src/smb_constants.dart';
@@ -12,7 +10,7 @@ class MsrpcShareInfo1 implements FileEntry {
 
   MsrpcShareInfo1(this.netName, this.type, this.remark);
 
-  MsrpcShareInfo1.info(srvsvc_ShareInfo1 info1)
+  MsrpcShareInfo1.info(SrvsvcShareInfo1 info1)
       : this(info1.netname!, info1.type, info1.remark);
 
   @override
@@ -27,9 +25,9 @@ class MsrpcShareInfo1 implements FileEntry {
 
   @override
   int getType() {
-    /*
-     * 0x80000000 means hidden but SmbFile.isHidden() checks for $ at end
-     */
+    ///
+    /// 0x80000000 means hidden but SmbFile.isHidden() checks for $ at end
+    ///
     switch (type & 0xFFFF) {
       case 1:
         return SmbConstants.TYPE_PRINTER;

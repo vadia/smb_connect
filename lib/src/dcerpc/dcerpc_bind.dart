@@ -6,7 +6,7 @@ import 'package:smb_connect/src/dcerpc/ndr/ndr_buffer.dart';
 import 'package:smb_connect/src/utils/strings.dart';
 
 class DcerpcBind extends DcerpcMessage {
-  static final List<String> result_message = [
+  static final List<String> resultMessage = [
     "0",
     "DcerpcConstants.DCERPC_BIND_ERR_ABSTRACT_SYNTAX_NOT_SUPPORTED",
     "DcerpcConstants.DCERPC_BIND_ERR_PROPOSED_TRANSFER_SYNTAXES_NOT_SUPPORTED",
@@ -15,7 +15,7 @@ class DcerpcBind extends DcerpcMessage {
 
   static String _getResultMessage(int result) {
     return result < 4
-        ? result_message[result]
+        ? resultMessage[result]
         : "0x${Hexdump.toHexString(result, 4)}";
   }
 
@@ -26,14 +26,11 @@ class DcerpcBind extends DcerpcMessage {
   }
 
   DcerpcBinding? binding;
-  final int _max_xmit, _max_recv;
+  final int _maxXmit, _maxRecv;
 
-  /// Construct bind message
-  // DcerpcBind() {}
-
-  DcerpcBind({this.binding, int? maxXmit, int? maxRecv}) //DcerpcHandle? handle
-      : _max_xmit = maxXmit ?? 0,
-        _max_recv = maxRecv ?? 0 {
+  DcerpcBind({this.binding, int? maxXmit, int? maxRecv})
+      : _maxXmit = maxXmit ?? 0,
+        _maxRecv = maxRecv ?? 0 {
     ptype = 11;
     flags =
         DcerpcConstants.DCERPC_FIRST_FRAG | DcerpcConstants.DCERPC_LAST_FRAG;
@@ -45,35 +42,35 @@ class DcerpcBind extends DcerpcMessage {
   }
 
   @override
-  void encode_in(NdrBuffer buf) {
-    buf.enc_ndr_short(_max_xmit);
-    buf.enc_ndr_short(_max_recv);
-    buf.enc_ndr_long(0); /* assoc. group */
-    buf.enc_ndr_small(1); /* num context items */
-    buf.enc_ndr_small(0); /* reserved */
-    buf.enc_ndr_short(0); /* reserved2 */
-    buf.enc_ndr_short(0); /* context id */
-    buf.enc_ndr_small(1); /* number of items */
-    buf.enc_ndr_small(0); /* reserved */
+  void encodeIn(NdrBuffer buf) {
+    buf.encNdrShort(_maxXmit);
+    buf.encNdrShort(_maxRecv);
+    buf.encNdrLong(0); /* assoc. group */
+    buf.encNdrSmall(1); /* num context items */
+    buf.encNdrSmall(0); /* reserved */
+    buf.encNdrShort(0); /* reserved2 */
+    buf.encNdrShort(0); /* context id */
+    buf.encNdrSmall(1); /* number of items */
+    buf.encNdrSmall(0); /* reserved */
     binding!.getUuid()!.encode(buf);
-    buf.enc_ndr_short(binding!.getMajor());
-    buf.enc_ndr_short(binding!.getMinor());
+    buf.encNdrShort(binding!.getMajor());
+    buf.encNdrShort(binding!.getMinor());
     DcerpcConstants.DCERPC_UUID_SYNTAX_NDR.encode(buf);
-    buf.enc_ndr_long(2); /* syntax version */
+    buf.encNdrLong(2); /* syntax version */
   }
 
   @override
-  void decode_out(NdrBuffer buf) {
-    buf.dec_ndr_short(); /* max transmit frag size */
-    buf.dec_ndr_short(); /* max receive frag size */
-    buf.dec_ndr_long(); /* assoc. group */
-    int n = buf.dec_ndr_short(); /* secondary addr len */
+  void decodeOut(NdrBuffer buf) {
+    buf.decNdrShort(); /* max transmit frag size */
+    buf.decNdrShort(); /* max receive frag size */
+    buf.decNdrLong(); /* assoc. group */
+    int n = buf.decNdrShort(); /* secondary addr len */
     buf.advance(n); /* secondary addr */
     buf.align(4);
-    buf.dec_ndr_small(); /* num results */
+    buf.decNdrSmall(); /* num results */
     buf.align(4);
-    result = buf.dec_ndr_short();
-    buf.dec_ndr_short();
+    result = buf.decNdrShort();
+    buf.decNdrShort();
     buf.advance(20); /* transfer syntax / version */
   }
 }

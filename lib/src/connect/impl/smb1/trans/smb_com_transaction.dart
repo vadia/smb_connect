@@ -68,7 +68,7 @@ abstract class SmbComTransaction extends ServerMessageBlock
   int maxBufferSize =
       0; // set in SmbTransport.sendTransaction() before nextElement called
 
-  Uint8List? txn_buf;
+  Uint8List? txnBuf;
 
   SmbComTransaction(super.config, int command, {this.subCommand = 0})
       : super(command: command) {
@@ -88,12 +88,12 @@ abstract class SmbComTransaction extends ServerMessageBlock
   }
 
   void setBuffer(Uint8List buffer) {
-    txn_buf = buffer;
+    txnBuf = buffer;
   }
 
   Uint8List? releaseBuffer() {
-    Uint8List? buf = txn_buf;
-    txn_buf = null;
+    Uint8List? buf = txnBuf;
+    txnBuf = null;
     return buf;
   }
 
@@ -143,7 +143,7 @@ abstract class SmbComTransaction extends ServerMessageBlock
       parameterOffset += _pad1;
 
       totalParameterCount =
-          writeParametersWireFormat(txn_buf!, _bufParameterOffset);
+          writeParametersWireFormat(txnBuf!, _bufParameterOffset);
       _bufDataOffset = totalParameterCount; // data comes right after data
 
       int available = maxBufferSize - parameterOffset;
@@ -154,7 +154,7 @@ abstract class SmbComTransaction extends ServerMessageBlock
       _pad2 = pad(dataOffset);
       dataOffset += _pad2;
 
-      totalDataCount = writeDataWireFormat(txn_buf!, _bufDataOffset);
+      totalDataCount = writeDataWireFormat(txnBuf!, _bufDataOffset);
 
       dataCount = min(totalDataCount, available);
     } else {
@@ -267,7 +267,7 @@ abstract class SmbComTransaction extends ServerMessageBlock
 
     if (parameterCount > 0) {
       byteArrayCopy(
-          src: txn_buf!,
+          src: txnBuf!,
           srcOffset: _bufParameterOffset,
           dst: dst,
           dstOffset: headerStart + parameterOffset,
@@ -277,7 +277,7 @@ abstract class SmbComTransaction extends ServerMessageBlock
 
     if (dataCount > 0) {
       byteArrayCopy(
-          src: txn_buf!,
+          src: txnBuf!,
           srcOffset: _bufDataOffset,
           dst: dst,
           dstOffset: headerStart + dataOffset,

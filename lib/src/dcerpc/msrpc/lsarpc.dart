@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types, no_leading_underscores_for_local_identifiers
-
 import 'dart:typed_data';
 
 import 'package:smb_connect/src/exceptions.dart';
@@ -10,119 +8,119 @@ import 'package:smb_connect/src/dcerpc/rpc.dart';
 
 import '../ndr/ndr_small.dart';
 
-String lsarpc_getSyntax() {
+String lsarpcGetSyntax() {
   return "12345778-1234-abcd-ef00-0123456789ab:0.0";
 }
 
-class lsarpc_LsarQosInfo extends NdrObject {
+class LsarpcQosInfo extends NdrObject {
   int length = 0;
-  int impersonation_level = 0;
-  int context_mode = 0;
-  int effective_only = 0;
+  int impersonationLevel = 0;
+  int contextMode = 0;
+  int effectiveOnly = 0;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_long(length);
-    dst.enc_ndr_short(impersonation_level);
-    dst.enc_ndr_small(context_mode);
-    dst.enc_ndr_small(effective_only);
+    dst.encNdrLong(length);
+    dst.encNdrShort(impersonationLevel);
+    dst.encNdrSmall(contextMode);
+    dst.encNdrSmall(effectiveOnly);
   }
 
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    length = src.dec_ndr_long();
-    impersonation_level = src.dec_ndr_short();
-    context_mode = src.dec_ndr_small();
-    effective_only = src.dec_ndr_small();
+    length = src.decNdrLong();
+    impersonationLevel = src.decNdrShort();
+    contextMode = src.decNdrSmall();
+    effectiveOnly = src.decNdrSmall();
   }
 }
 
-class lsarpc_LsarObjectAttributes extends NdrObject {
+class LsarpcObjectAttributes extends NdrObject {
   int length = 0;
-  NdrSmall? root_directory;
-  rpc_unicode_string? object_name;
+  NdrSmall? rootDirectory;
+  RpcUnicodeString? objectName;
   int attributes = 0;
-  int security_descriptor = 0;
-  lsarpc_LsarQosInfo? security_quality_of_service;
+  int securityDescriptor = 0;
+  LsarpcQosInfo? securityQualityOfService;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_long(length);
-    dst.enc_ndr_referent(root_directory, 1);
-    dst.enc_ndr_referent(object_name, 1);
-    dst.enc_ndr_long(attributes);
-    dst.enc_ndr_long(security_descriptor);
-    dst.enc_ndr_referent(security_quality_of_service, 1);
+    dst.encNdrLong(length);
+    dst.encNdrReferent(rootDirectory, 1);
+    dst.encNdrReferent(objectName, 1);
+    dst.encNdrLong(attributes);
+    dst.encNdrLong(securityDescriptor);
+    dst.encNdrReferent(securityQualityOfService, 1);
 
-    if (root_directory != null) {
+    if (rootDirectory != null) {
       dst = dst.deferred;
-      root_directory!.encode(dst);
+      rootDirectory!.encode(dst);
     }
-    if (object_name != null) {
+    if (objectName != null) {
       dst = dst.deferred;
-      object_name!.encode(dst);
+      objectName!.encode(dst);
     }
-    if (security_quality_of_service != null) {
+    if (securityQualityOfService != null) {
       dst = dst.deferred;
-      security_quality_of_service!.encode(dst);
+      securityQualityOfService!.encode(dst);
     }
   }
 
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    length = src.dec_ndr_long();
-    int _root_directoryp = src.dec_ndr_long();
-    int _object_namep = src.dec_ndr_long();
-    attributes = src.dec_ndr_long();
-    security_descriptor = src.dec_ndr_long();
-    int _security_quality_of_servicep = src.dec_ndr_long();
+    length = src.decNdrLong();
+    int rootDirectoryp = src.decNdrLong();
+    int objectNamep = src.decNdrLong();
+    attributes = src.decNdrLong();
+    securityDescriptor = src.decNdrLong();
+    int securityQualityOfServicep = src.decNdrLong();
 
-    if (_root_directoryp != 0) {
+    if (rootDirectoryp != 0) {
       src = src.deferred;
-      root_directory!.decode(src);
+      rootDirectory!.decode(src);
     }
-    if (_object_namep != 0) {
-      object_name ??= rpc_unicode_string();
+    if (objectNamep != 0) {
+      objectName ??= RpcUnicodeString();
       src = src.deferred;
-      object_name!.decode(src);
+      objectName!.decode(src);
     }
-    if (_security_quality_of_servicep != 0) {
-      security_quality_of_service ??= lsarpc_LsarQosInfo();
+    if (securityQualityOfServicep != 0) {
+      securityQualityOfService ??= LsarpcQosInfo();
       src = src.deferred;
-      security_quality_of_service!.decode(src);
+      securityQualityOfService!.decode(src);
     }
   }
 }
 
-class lsarpc_LsarDomainInfo extends NdrObject {
-  rpc_unicode_string? name;
-  rpc_sid_t? sid;
+class LsarpcDomainInfo extends NdrObject {
+  RpcUnicodeString? name;
+  RpcSidT? sid;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_short(name!.length);
-    dst.enc_ndr_short(name!.maximum_length);
-    dst.enc_ndr_referent(name!.buffer, 1);
-    dst.enc_ndr_referent(sid, 1);
+    dst.encNdrShort(name!.length);
+    dst.encNdrShort(name!.maximumLength);
+    dst.encNdrReferent(name!.buffer, 1);
+    dst.encNdrReferent(sid, 1);
 
     if (name!.buffer != null) {
       dst = dst.deferred;
-      int _name_bufferl = name!.length ~/ 2;
-      int _name_buffers = name!.maximum_length ~/ 2;
-      dst.enc_ndr_long(_name_buffers);
-      dst.enc_ndr_long(0);
-      dst.enc_ndr_long(_name_bufferl);
-      int _name_bufferi = dst.index;
-      dst.advance(2 * _name_bufferl);
+      int nameBufferl = name!.length ~/ 2;
+      int nameBuffers = name!.maximumLength ~/ 2;
+      dst.encNdrLong(nameBuffers);
+      dst.encNdrLong(0);
+      dst.encNdrLong(nameBufferl);
+      int nameBufferi = dst.index;
+      dst.advance(2 * nameBufferl);
 
-      dst = dst.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        dst.enc_ndr_short(name!.buffer![_i]);
+      dst = dst.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        dst.encNdrShort(name!.buffer![i]);
       }
     }
     if (sid != null) {
@@ -135,116 +133,116 @@ class lsarpc_LsarDomainInfo extends NdrObject {
   void decode(NdrBuffer src) {
     src.align(4);
     src.align(4);
-    name ??= rpc_unicode_string();
-    name!.length = src.dec_ndr_short();
-    name!.maximum_length = src.dec_ndr_short();
-    int _name_bufferp = src.dec_ndr_long();
-    int _sidp = src.dec_ndr_long();
+    name ??= RpcUnicodeString();
+    name!.length = src.decNdrShort();
+    name!.maximumLength = src.decNdrShort();
+    int nameBufferp = src.decNdrLong();
+    int sidp = src.decNdrLong();
 
-    if (_name_bufferp != 0) {
+    if (nameBufferp != 0) {
       src = src.deferred;
-      int _name_buffers = src.dec_ndr_long();
-      src.dec_ndr_long();
-      int _name_bufferl = src.dec_ndr_long();
-      int _name_bufferi = src.index;
-      src.advance(2 * _name_bufferl);
+      int nameBuffers = src.decNdrLong();
+      src.decNdrLong();
+      int nameBufferl = src.decNdrLong();
+      int nameBufferi = src.index;
+      src.advance(2 * nameBufferl);
 
       if (name!.buffer == null) {
-        if (_name_buffers < 0 || _name_buffers > 0xFFFF) {
+        if (nameBuffers < 0 || nameBuffers > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        name!.buffer = Uint8List(_name_buffers);
+        name!.buffer = Uint8List(nameBuffers);
       }
-      src = src.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        name!.buffer![_i] = src.dec_ndr_short();
+      src = src.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        name!.buffer![i] = src.decNdrShort();
       }
     }
-    if (_sidp != 0) {
-      sid ??= rpc_sid_t();
+    if (sidp != 0) {
+      sid ??= RpcSidT();
       src = src.deferred;
       sid!.decode(src);
     }
   }
 }
 
-class lsarpc_LsarDnsDomainInfo extends NdrObject {
-  rpc_unicode_string? name;
-  rpc_unicode_string? dns_domain;
-  rpc_unicode_string? dns_forest;
-  rpc_uuid_t? domain_guid;
-  rpc_sid_t? sid;
+class LsarpcDnsDomainInfo extends NdrObject {
+  RpcUnicodeString? name;
+  RpcUnicodeString? dnsDomain;
+  RpcUnicodeString? dnsForest;
+  RpcUuidT? domainGuid;
+  RpcSidT? sid;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_short(name!.length);
-    dst.enc_ndr_short(name!.maximum_length);
-    dst.enc_ndr_referent(name!.buffer, 1);
-    dst.enc_ndr_short(dns_domain!.length);
-    dst.enc_ndr_short(dns_domain!.maximum_length);
-    dst.enc_ndr_referent(dns_domain!.buffer, 1);
-    dst.enc_ndr_short(dns_forest!.length);
-    dst.enc_ndr_short(dns_forest!.maximum_length);
-    dst.enc_ndr_referent(dns_forest!.buffer, 1);
-    dst.enc_ndr_long(domain_guid!.time_low);
-    dst.enc_ndr_short(domain_guid!.time_mid);
-    dst.enc_ndr_short(domain_guid!.time_hi_and_version);
-    dst.enc_ndr_small(domain_guid!.clock_seq_hi_and_reserved);
-    dst.enc_ndr_small(domain_guid!.clock_seq_low);
-    int _domain_guid_nodes = 6;
-    int _domain_guid_nodei = dst.index;
-    dst.advance(1 * _domain_guid_nodes);
-    dst.enc_ndr_referent(sid, 1);
+    dst.encNdrShort(name!.length);
+    dst.encNdrShort(name!.maximumLength);
+    dst.encNdrReferent(name!.buffer, 1);
+    dst.encNdrShort(dnsDomain!.length);
+    dst.encNdrShort(dnsDomain!.maximumLength);
+    dst.encNdrReferent(dnsDomain!.buffer, 1);
+    dst.encNdrShort(dnsForest!.length);
+    dst.encNdrShort(dnsForest!.maximumLength);
+    dst.encNdrReferent(dnsForest!.buffer, 1);
+    dst.encNdrLong(domainGuid!.timeLow);
+    dst.encNdrShort(domainGuid!.timeMid);
+    dst.encNdrShort(domainGuid!.timeHiAndVersion);
+    dst.encNdrSmall(domainGuid!.clockSeqHiAndReserved);
+    dst.encNdrSmall(domainGuid!.clockSeqLow);
+    int domainGuidNodes = 6;
+    int domainGuidNodei = dst.index;
+    dst.advance(1 * domainGuidNodes);
+    dst.encNdrReferent(sid, 1);
 
     if (name!.buffer != null) {
       dst = dst.deferred;
-      int _name_bufferl = name!.length ~/ 2;
-      int _name_buffers = name!.maximum_length ~/ 2;
-      dst.enc_ndr_long(_name_buffers);
-      dst.enc_ndr_long(0);
-      dst.enc_ndr_long(_name_bufferl);
-      int _name_bufferi = dst.index;
-      dst.advance(2 * _name_bufferl);
+      int nameBufferl = name!.length ~/ 2;
+      int nameBuffers = name!.maximumLength ~/ 2;
+      dst.encNdrLong(nameBuffers);
+      dst.encNdrLong(0);
+      dst.encNdrLong(nameBufferl);
+      int nameBufferi = dst.index;
+      dst.advance(2 * nameBufferl);
 
-      dst = dst.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        dst.enc_ndr_short(name!.buffer![_i]);
+      dst = dst.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        dst.encNdrShort(name!.buffer![i]);
       }
     }
-    if (dns_domain!.buffer != null) {
+    if (dnsDomain!.buffer != null) {
       dst = dst.deferred;
-      int _dns_domain_bufferl = dns_domain!.length ~/ 2;
-      int _dns_domain_buffers = dns_domain!.maximum_length ~/ 2;
-      dst.enc_ndr_long(_dns_domain_buffers);
-      dst.enc_ndr_long(0);
-      dst.enc_ndr_long(_dns_domain_bufferl);
-      int _dns_domain_bufferi = dst.index;
-      dst.advance(2 * _dns_domain_bufferl);
+      int dnsDomainBufferl = dnsDomain!.length ~/ 2;
+      int dnsDomainBuffers = dnsDomain!.maximumLength ~/ 2;
+      dst.encNdrLong(dnsDomainBuffers);
+      dst.encNdrLong(0);
+      dst.encNdrLong(dnsDomainBufferl);
+      int dnsDomainBufferi = dst.index;
+      dst.advance(2 * dnsDomainBufferl);
 
-      dst = dst.derive(_dns_domain_bufferi);
-      for (int _i = 0; _i < _dns_domain_bufferl; _i++) {
-        dst.enc_ndr_short(dns_domain!.buffer![_i]);
+      dst = dst.derive(dnsDomainBufferi);
+      for (int i = 0; i < dnsDomainBufferl; i++) {
+        dst.encNdrShort(dnsDomain!.buffer![i]);
       }
     }
-    if (dns_forest!.buffer != null) {
+    if (dnsForest!.buffer != null) {
       dst = dst.deferred;
-      int _dns_forest_bufferl = dns_forest!.length ~/ 2;
-      int _dns_forest_buffers = dns_forest!.maximum_length ~/ 2;
-      dst.enc_ndr_long(_dns_forest_buffers);
-      dst.enc_ndr_long(0);
-      dst.enc_ndr_long(_dns_forest_bufferl);
-      int _dns_forest_bufferi = dst.index;
-      dst.advance(2 * _dns_forest_bufferl);
+      int dnsForestBufferl = dnsForest!.length ~/ 2;
+      int dnsForestBuffers = dnsForest!.maximumLength ~/ 2;
+      dst.encNdrLong(dnsForestBuffers);
+      dst.encNdrLong(0);
+      dst.encNdrLong(dnsForestBufferl);
+      int dnsForestBufferi = dst.index;
+      dst.advance(2 * dnsForestBufferl);
 
-      dst = dst.derive(_dns_forest_bufferi);
-      for (int _i = 0; _i < _dns_forest_bufferl; _i++) {
-        dst.enc_ndr_short(dns_forest!.buffer![_i]);
+      dst = dst.derive(dnsForestBufferi);
+      for (int i = 0; i < dnsForestBufferl; i++) {
+        dst.encNdrShort(dnsForest!.buffer![i]);
       }
     }
-    dst = dst.derive(_domain_guid_nodei);
-    for (int _i = 0; _i < _domain_guid_nodes; _i++) {
-      dst.enc_ndr_small(domain_guid!.node![_i]);
+    dst = dst.derive(domainGuidNodei);
+    for (int i = 0; i < domainGuidNodes; i++) {
+      dst.encNdrSmall(domainGuid!.node![i]);
     }
     if (sid != null) {
       dst = dst.deferred;
@@ -256,108 +254,108 @@ class lsarpc_LsarDnsDomainInfo extends NdrObject {
   void decode(NdrBuffer src) {
     src.align(4);
     src.align(4);
-    name ??= rpc_unicode_string();
-    name!.length = src.dec_ndr_short();
-    name!.maximum_length = src.dec_ndr_short();
-    int _name_bufferp = src.dec_ndr_long();
+    name ??= RpcUnicodeString();
+    name!.length = src.decNdrShort();
+    name!.maximumLength = src.decNdrShort();
+    int nameBufferp = src.decNdrLong();
     src.align(4);
-    dns_domain ??= rpc_unicode_string();
-    dns_domain!.length = src.dec_ndr_short();
-    dns_domain!.maximum_length = src.dec_ndr_short();
-    int _dns_domain_bufferp = src.dec_ndr_long();
+    dnsDomain ??= RpcUnicodeString();
+    dnsDomain!.length = src.decNdrShort();
+    dnsDomain!.maximumLength = src.decNdrShort();
+    int dnsDomainBufferp = src.decNdrLong();
     src.align(4);
-    dns_forest ??= rpc_unicode_string();
-    dns_forest!.length = src.dec_ndr_short();
-    dns_forest!.maximum_length = src.dec_ndr_short();
-    int _dns_forest_bufferp = src.dec_ndr_long();
+    dnsForest ??= RpcUnicodeString();
+    dnsForest!.length = src.decNdrShort();
+    dnsForest!.maximumLength = src.decNdrShort();
+    int dnsForestBufferp = src.decNdrLong();
     src.align(4);
-    domain_guid ??= rpc_uuid_t();
-    domain_guid!.time_low = src.dec_ndr_long();
-    domain_guid!.time_mid = src.dec_ndr_short();
-    domain_guid!.time_hi_and_version = src.dec_ndr_short();
-    domain_guid!.clock_seq_hi_and_reserved = src.dec_ndr_small();
-    domain_guid!.clock_seq_low = src.dec_ndr_small();
-    int _domain_guid_nodes = 6;
-    int _domain_guid_nodei = src.index;
-    src.advance(1 * _domain_guid_nodes);
-    int _sidp = src.dec_ndr_long();
+    domainGuid ??= RpcUuidT();
+    domainGuid!.timeLow = src.decNdrLong();
+    domainGuid!.timeMid = src.decNdrShort();
+    domainGuid!.timeHiAndVersion = src.decNdrShort();
+    domainGuid!.clockSeqHiAndReserved = src.decNdrSmall();
+    domainGuid!.clockSeqLow = src.decNdrSmall();
+    int domainGuidNodes = 6;
+    int domainGuidNodei = src.index;
+    src.advance(1 * domainGuidNodes);
+    int sidp = src.decNdrLong();
 
-    if (_name_bufferp != 0) {
+    if (nameBufferp != 0) {
       src = src.deferred;
-      int _name_buffers = src.dec_ndr_long();
-      src.dec_ndr_long();
-      int _name_bufferl = src.dec_ndr_long();
-      int _name_bufferi = src.index;
-      src.advance(2 * _name_bufferl);
+      int nameBuffers = src.decNdrLong();
+      src.decNdrLong();
+      int nameBufferl = src.decNdrLong();
+      int nameBufferi = src.index;
+      src.advance(2 * nameBufferl);
 
       if (name!.buffer == null) {
-        if (_name_buffers < 0 || _name_buffers > 0xFFFF) {
+        if (nameBuffers < 0 || nameBuffers > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        name!.buffer = Uint8List(_name_buffers);
+        name!.buffer = Uint8List(nameBuffers);
       }
-      src = src.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        name!.buffer![_i] = src.dec_ndr_short();
+      src = src.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        name!.buffer![i] = src.decNdrShort();
       }
     }
-    if (_dns_domain_bufferp != 0) {
+    if (dnsDomainBufferp != 0) {
       src = src.deferred;
-      int _dns_domain_buffers = src.dec_ndr_long();
-      src.dec_ndr_long();
-      int _dns_domain_bufferl = src.dec_ndr_long();
-      int _dns_domain_bufferi = src.index;
-      src.advance(2 * _dns_domain_bufferl);
+      int dnsDomainBuffers = src.decNdrLong();
+      src.decNdrLong();
+      int dnsDomainBufferl = src.decNdrLong();
+      int dnsDomainBufferi = src.index;
+      src.advance(2 * dnsDomainBufferl);
 
-      if (dns_domain!.buffer == null) {
-        if (_dns_domain_buffers < 0 || _dns_domain_buffers > 0xFFFF) {
+      if (dnsDomain!.buffer == null) {
+        if (dnsDomainBuffers < 0 || dnsDomainBuffers > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        dns_domain!.buffer = Uint8List(_dns_domain_buffers);
+        dnsDomain!.buffer = Uint8List(dnsDomainBuffers);
       }
-      src = src.derive(_dns_domain_bufferi);
-      for (int _i = 0; _i < _dns_domain_bufferl; _i++) {
-        dns_domain!.buffer![_i] = src.dec_ndr_short();
+      src = src.derive(dnsDomainBufferi);
+      for (int i = 0; i < dnsDomainBufferl; i++) {
+        dnsDomain!.buffer![i] = src.decNdrShort();
       }
     }
-    if (_dns_forest_bufferp != 0) {
+    if (dnsForestBufferp != 0) {
       src = src.deferred;
-      int _dns_forest_buffers = src.dec_ndr_long();
-      src.dec_ndr_long();
-      int _dns_forest_bufferl = src.dec_ndr_long();
-      int _dns_forest_bufferi = src.index;
-      src.advance(2 * _dns_forest_bufferl);
+      int dnsForestBuffers = src.decNdrLong();
+      src.decNdrLong();
+      int dnsForestBufferl = src.decNdrLong();
+      int dnsForestBufferi = src.index;
+      src.advance(2 * dnsForestBufferl);
 
-      if (dns_forest!.buffer == null) {
-        if (_dns_forest_buffers < 0 || _dns_forest_buffers > 0xFFFF) {
+      if (dnsForest!.buffer == null) {
+        if (dnsForestBuffers < 0 || dnsForestBuffers > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        dns_forest!.buffer = Uint8List(_dns_forest_buffers);
+        dnsForest!.buffer = Uint8List(dnsForestBuffers);
       }
-      src = src.derive(_dns_forest_bufferi);
-      for (int _i = 0; _i < _dns_forest_bufferl; _i++) {
-        dns_forest!.buffer![_i] = src.dec_ndr_short();
+      src = src.derive(dnsForestBufferi);
+      for (int i = 0; i < dnsForestBufferl; i++) {
+        dnsForest!.buffer![i] = src.decNdrShort();
       }
     }
-    if (domain_guid!.node == null) {
-      if (_domain_guid_nodes < 0 || _domain_guid_nodes > 0xFFFF) {
+    if (domainGuid!.node == null) {
+      if (domainGuidNodes < 0 || domainGuidNodes > 0xFFFF) {
         throw NdrException(NdrException.INVALID_CONFORMANCE);
       }
-      domain_guid!.node = Uint8List(_domain_guid_nodes);
+      domainGuid!.node = Uint8List(domainGuidNodes);
     }
-    src = src.derive(_domain_guid_nodei);
-    for (int _i = 0; _i < _domain_guid_nodes; _i++) {
-      domain_guid!.node![_i] = src.dec_ndr_small();
+    src = src.derive(domainGuidNodei);
+    for (int i = 0; i < domainGuidNodes; i++) {
+      domainGuid!.node![i] = src.decNdrSmall();
     }
-    if (_sidp != 0) {
-      sid ??= rpc_sid_t();
+    if (sidp != 0) {
+      sid ??= RpcSidT();
       src = src.deferred;
       sid!.decode(src);
     }
   }
 }
 
-class lsarpc_LsarSidPtr extends NdrObject {
+class LsarpcSidPtr extends NdrObject {
   static const int POLICY_INFO_AUDIT_EVENTS = 2;
   static const int POLICY_INFO_PRIMARY_DOMAIN = 3;
   static const int POLICY_INFO_ACCOUNT_DOMAIN = 5;
@@ -365,12 +363,12 @@ class lsarpc_LsarSidPtr extends NdrObject {
   static const int POLICY_INFO_MODIFICATION = 9;
   static const int POLICY_INFO_DNS_DOMAIN = 12;
 
-  rpc_sid_t? sid;
+  RpcSidT? sid;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_referent(sid, 1);
+    dst.encNdrReferent(sid, 1);
 
     if (sid != null) {
       dst = dst.deferred;
@@ -381,36 +379,36 @@ class lsarpc_LsarSidPtr extends NdrObject {
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    int _sidp = src.dec_ndr_long();
+    int sidp = src.decNdrLong();
 
-    if (_sidp != 0) {
-      sid ??= rpc_sid_t();
+    if (sidp != 0) {
+      sid ??= RpcSidT();
       src = src.deferred;
       sid!.decode(src);
     }
   }
 }
 
-class lsarpc_LsarSidArray extends NdrObject {
-  int num_sids = 0;
-  List<lsarpc_LsarSidPtr>? sids;
+class LsarpcSidArray extends NdrObject {
+  int numSids = 0;
+  List<LsarpcSidPtr>? sids;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_long(num_sids);
-    dst.enc_ndr_referent(sids, 1);
+    dst.encNdrLong(numSids);
+    dst.encNdrReferent(sids, 1);
 
     if (sids != null) {
       dst = dst.deferred;
-      int _sidss = num_sids;
-      dst.enc_ndr_long(_sidss);
-      int _sidsi = dst.index;
-      dst.advance(4 * _sidss);
+      int sidss = numSids;
+      dst.encNdrLong(sidss);
+      int sidsi = dst.index;
+      dst.advance(4 * sidss);
 
-      dst = dst.derive(_sidsi);
-      for (int _i = 0; _i < _sidss; _i++) {
-        sids![_i].encode(dst);
+      dst = dst.derive(sidsi);
+      for (int i = 0; i < sidss; i++) {
+        sids![i].encode(dst);
       }
     }
   }
@@ -418,34 +416,30 @@ class lsarpc_LsarSidArray extends NdrObject {
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    num_sids = src.dec_ndr_long();
-    int _sidsp = src.dec_ndr_long();
+    numSids = src.decNdrLong();
+    int sidsp = src.decNdrLong();
 
-    if (_sidsp != 0) {
+    if (sidsp != 0) {
       src = src.deferred;
-      int _sidss = src.dec_ndr_long();
-      int _sidsi = src.index;
-      src.advance(4 * _sidss);
+      int sidss = src.decNdrLong();
+      int sidsi = src.index;
+      src.advance(4 * sidss);
 
       if (sids == null) {
-        if (_sidss < 0 || _sidss > 0xFFFF) {
+        if (sidss < 0 || sidss > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        sids = List.generate(
-            _sidss, (index) => lsarpc_LsarSidPtr()); // LsarSidPtr[_sidss];
+        sids = List.generate(sidss, (index) => LsarpcSidPtr());
       }
-      src = src.derive(_sidsi);
-      for (int _i = 0; _i < _sidss; _i++) {
-        // if ( sids[ _i ] == null ) {
-        //     sids[ _i ] = LsarSidPtr();
-        // }
-        sids![_i].decode(src);
+      src = src.derive(sidsi);
+      for (int i = 0; i < sidss; i++) {
+        sids![i].decode(src);
       }
     }
   }
 }
 
-class lsarpc_LsarTranslatedSid extends NdrObject {
+class LsarpcTranslatedSid extends NdrObject {
   static const int SID_NAME_USE_NONE = 0;
   static const int SID_NAME_USER = 1;
   static const int SID_NAME_DOM_GRP = 2;
@@ -456,47 +450,47 @@ class lsarpc_LsarTranslatedSid extends NdrObject {
   static const int SID_NAME_INVALID = 7;
   static const int SID_NAME_UNKNOWN = 8;
 
-  int sid_type = 0;
+  int sidType = 0;
   int rid = 0;
-  int sid_index = 0;
+  int sidIndex = 0;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_short(sid_type);
-    dst.enc_ndr_long(rid);
-    dst.enc_ndr_long(sid_index);
+    dst.encNdrShort(sidType);
+    dst.encNdrLong(rid);
+    dst.encNdrLong(sidIndex);
   }
 
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    sid_type = src.dec_ndr_short();
-    rid = src.dec_ndr_long();
-    sid_index = src.dec_ndr_long();
+    sidType = src.decNdrShort();
+    rid = src.decNdrLong();
+    sidIndex = src.decNdrLong();
   }
 }
 
-class lsarpc_LsarTransSidArray extends NdrObject {
+class LsarpcTransSidArray extends NdrObject {
   int count = 0;
-  List<lsarpc_LsarTranslatedSid>? sids;
+  List<LsarpcTranslatedSid>? sids;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_long(count);
-    dst.enc_ndr_referent(sids, 1);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(sids, 1);
 
     if (sids != null) {
       dst = dst.deferred;
-      int _sidss = count;
-      dst.enc_ndr_long(_sidss);
-      int _sidsi = dst.index;
-      dst.advance(12 * _sidss);
+      int sidss = count;
+      dst.encNdrLong(sidss);
+      int sidsi = dst.index;
+      dst.advance(12 * sidss);
 
-      dst = dst.derive(_sidsi);
-      for (int _i = 0; _i < _sidss; _i++) {
-        sids![_i].encode(dst);
+      dst = dst.derive(sidsi);
+      for (int i = 0; i < sidss; i++) {
+        sids![i].encode(dst);
       }
     }
   }
@@ -504,62 +498,54 @@ class lsarpc_LsarTransSidArray extends NdrObject {
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    count = src.dec_ndr_long();
-    int _sidsp = src.dec_ndr_long();
+    count = src.decNdrLong();
+    int sidsp = src.decNdrLong();
 
-    if (_sidsp != 0) {
+    if (sidsp != 0) {
       src = src.deferred;
-      int _sidss = src.dec_ndr_long();
-      int _sidsi = src.index;
-      src.advance(12 * _sidss);
+      int sidss = src.decNdrLong();
+      int sidsi = src.index;
+      src.advance(12 * sidss);
 
       if (sids == null) {
-        if (_sidss < 0 || _sidss > 0xFFFF) {
+        if (sidss < 0 || sidss > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        sids = List.generate(
-            _sidss,
-            (index) =>
-                lsarpc_LsarTranslatedSid()); // LsarTranslatedSid[_sidss];
+        sids = List.generate(sidss, (index) => LsarpcTranslatedSid());
       }
-      src = src.derive(_sidsi);
-      for (int _i = 0; _i < _sidss; _i++) {
-        // if ( sids[ _i ] == null ) {
-        //     sids[ _i ] = LsarTranslatedSid();
-        // }
-        sids![_i].decode(src);
+      src = src.derive(sidsi);
+      for (int i = 0; i < sidss; i++) {
+        sids![i].decode(src);
       }
     }
   }
 }
 
-class lsarpc_LsarTrustInformation extends NdrObject {
-  rpc_unicode_string? name;
-  rpc_sid_t? sid;
-
-  // lsarpc_LsarTrustInformation(this.name);
+class LsarpcTrustInformation extends NdrObject {
+  RpcUnicodeString? name;
+  RpcSidT? sid;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_short(name!.length);
-    dst.enc_ndr_short(name!.maximum_length);
-    dst.enc_ndr_referent(name!.buffer, 1);
-    dst.enc_ndr_referent(sid, 1);
+    dst.encNdrShort(name!.length);
+    dst.encNdrShort(name!.maximumLength);
+    dst.encNdrReferent(name!.buffer, 1);
+    dst.encNdrReferent(sid, 1);
 
     if (name!.buffer != null) {
       dst = dst.deferred;
-      int _name_bufferl = name!.length ~/ 2;
-      int _name_buffers = name!.maximum_length ~/ 2;
-      dst.enc_ndr_long(_name_buffers);
-      dst.enc_ndr_long(0);
-      dst.enc_ndr_long(_name_bufferl);
-      int _name_bufferi = dst.index;
-      dst.advance(2 * _name_bufferl);
+      int nameBufferl = name!.length ~/ 2;
+      int nameBuffers = name!.maximumLength ~/ 2;
+      dst.encNdrLong(nameBuffers);
+      dst.encNdrLong(0);
+      dst.encNdrLong(nameBufferl);
+      int nameBufferi = dst.index;
+      dst.advance(2 * nameBufferl);
 
-      dst = dst.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        dst.enc_ndr_short(name!.buffer![_i]);
+      dst = dst.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        dst.encNdrShort(name!.buffer![i]);
       }
     }
     if (sid != null) {
@@ -572,61 +558,61 @@ class lsarpc_LsarTrustInformation extends NdrObject {
   void decode(NdrBuffer src) {
     src.align(4);
     src.align(4);
-    name ??= rpc_unicode_string();
-    name!.length = src.dec_ndr_short();
-    name!.maximum_length = src.dec_ndr_short();
-    int _name_bufferp = src.dec_ndr_long();
-    int _sidp = src.dec_ndr_long();
+    name ??= RpcUnicodeString();
+    name!.length = src.decNdrShort();
+    name!.maximumLength = src.decNdrShort();
+    int nameBufferp = src.decNdrLong();
+    int sidp = src.decNdrLong();
 
-    if (_name_bufferp != 0) {
+    if (nameBufferp != 0) {
       src = src.deferred;
-      int _name_buffers = src.dec_ndr_long();
-      src.dec_ndr_long();
-      int _name_bufferl = src.dec_ndr_long();
-      int _name_bufferi = src.index;
-      src.advance(2 * _name_bufferl);
+      int nameBuffers = src.decNdrLong();
+      src.decNdrLong();
+      int nameBufferl = src.decNdrLong();
+      int nameBufferi = src.index;
+      src.advance(2 * nameBufferl);
 
       if (name!.buffer == null) {
-        if (_name_buffers < 0 || _name_buffers > 0xFFFF) {
+        if (nameBuffers < 0 || nameBuffers > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        name!.buffer = Uint8List(_name_buffers);
+        name!.buffer = Uint8List(nameBuffers);
       }
-      src = src.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        name!.buffer![_i] = src.dec_ndr_short();
+      src = src.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        name!.buffer![i] = src.decNdrShort();
       }
     }
-    if (_sidp != 0) {
-      sid ??= rpc_sid_t();
+    if (sidp != 0) {
+      sid ??= RpcSidT();
       src = src.deferred;
       sid!.decode(src);
     }
   }
 }
 
-class lsarpc_LsarRefDomainList extends NdrObject {
+class LsarpcRefDomainList extends NdrObject {
   int count = 0;
-  List<lsarpc_LsarTrustInformation>? domains;
-  int max_count = 0;
+  List<LsarpcTrustInformation>? domains;
+  int maxCount = 0;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_long(count);
-    dst.enc_ndr_referent(domains, 1);
-    dst.enc_ndr_long(max_count);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(domains, 1);
+    dst.encNdrLong(maxCount);
 
     if (domains != null) {
       dst = dst.deferred;
-      int _domainss = count;
-      dst.enc_ndr_long(_domainss);
-      int _domainsi = dst.index;
-      dst.advance(12 * _domainss);
+      int domainss = count;
+      dst.encNdrLong(domainss);
+      int domainsi = dst.index;
+      dst.advance(12 * domainss);
 
-      dst = dst.derive(_domainsi);
-      for (int _i = 0; _i < _domainss; _i++) {
-        domains![_i].encode(dst);
+      dst = dst.derive(domainsi);
+      for (int i = 0; i < domainss; i++) {
+        domains![i].encode(dst);
       }
     }
   }
@@ -634,63 +620,57 @@ class lsarpc_LsarRefDomainList extends NdrObject {
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    count = src.dec_ndr_long();
-    int _domainsp = src.dec_ndr_long();
-    max_count = src.dec_ndr_long();
+    count = src.decNdrLong();
+    int domainsp = src.decNdrLong();
+    maxCount = src.decNdrLong();
 
-    if (_domainsp != 0) {
+    if (domainsp != 0) {
       src = src.deferred;
-      int _domainss = src.dec_ndr_long();
-      int _domainsi = src.index;
-      src.advance(12 * _domainss);
+      int domainss = src.decNdrLong();
+      int domainsi = src.index;
+      src.advance(12 * domainss);
 
       if (domains == null) {
-        if (_domainss < 0 || _domainss > 0xFFFF) {
+        if (domainss < 0 || domainss > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        domains = List.generate(
-            _domainss,
-            (index) =>
-                lsarpc_LsarTrustInformation()); // LsarTrustInformation[_domainss];
+        domains = List.generate(domainss, (index) => LsarpcTrustInformation());
       }
-      src = src.derive(_domainsi);
-      for (int _i = 0; _i < _domainss; _i++) {
-        // if ( domains[ _i ] == null ) {
-        //     domains[ _i ] = LsarTrustInformation();
-        // }
-        domains![_i].decode(src);
+      src = src.derive(domainsi);
+      for (int i = 0; i < domainss; i++) {
+        domains![i].decode(src);
       }
     }
   }
 }
 
-class lsarpc_LsarTranslatedName extends NdrObject {
-  int sid_type = 0;
-  rpc_unicode_string? name;
-  int sid_index = 0;
+class LsarpcTranslatedName extends NdrObject {
+  int sidType = 0;
+  RpcUnicodeString? name;
+  int sidIndex = 0;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_short(sid_type);
-    dst.enc_ndr_short(name!.length);
-    dst.enc_ndr_short(name!.maximum_length);
-    dst.enc_ndr_referent(name!.buffer, 1);
-    dst.enc_ndr_long(sid_index);
+    dst.encNdrShort(sidType);
+    dst.encNdrShort(name!.length);
+    dst.encNdrShort(name!.maximumLength);
+    dst.encNdrReferent(name!.buffer, 1);
+    dst.encNdrLong(sidIndex);
 
     if (name!.buffer != null) {
       dst = dst.deferred;
-      int _name_bufferl = name!.length ~/ 2;
-      int _name_buffers = name!.maximum_length ~/ 2;
-      dst.enc_ndr_long(_name_buffers);
-      dst.enc_ndr_long(0);
-      dst.enc_ndr_long(_name_bufferl);
-      int _name_bufferi = dst.index;
-      dst.advance(2 * _name_bufferl);
+      int nameBufferl = name!.length ~/ 2;
+      int nameBuffers = name!.maximumLength ~/ 2;
+      dst.encNdrLong(nameBuffers);
+      dst.encNdrLong(0);
+      dst.encNdrLong(nameBufferl);
+      int nameBufferi = dst.index;
+      dst.advance(2 * nameBufferl);
 
-      dst = dst.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        dst.enc_ndr_short(name!.buffer![_i]);
+      dst = dst.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        dst.encNdrShort(name!.buffer![i]);
       }
     }
   }
@@ -698,56 +678,56 @@ class lsarpc_LsarTranslatedName extends NdrObject {
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    sid_type = src.dec_ndr_short();
+    sidType = src.decNdrShort();
     src.align(4);
-    name ??= rpc_unicode_string();
-    name!.length = src.dec_ndr_short();
-    name!.maximum_length = src.dec_ndr_short();
-    int _name_bufferp = src.dec_ndr_long();
-    sid_index = src.dec_ndr_long();
+    name ??= RpcUnicodeString();
+    name!.length = src.decNdrShort();
+    name!.maximumLength = src.decNdrShort();
+    int nameBufferp = src.decNdrLong();
+    sidIndex = src.decNdrLong();
 
-    if (_name_bufferp != 0) {
+    if (nameBufferp != 0) {
       src = src.deferred;
-      int _name_buffers = src.dec_ndr_long();
-      src.dec_ndr_long();
-      int _name_bufferl = src.dec_ndr_long();
-      int _name_bufferi = src.index;
-      src.advance(2 * _name_bufferl);
+      int nameBuffers = src.decNdrLong();
+      src.decNdrLong();
+      int nameBufferl = src.decNdrLong();
+      int nameBufferi = src.index;
+      src.advance(2 * nameBufferl);
 
       if (name!.buffer == null) {
-        if (_name_buffers < 0 || _name_buffers > 0xFFFF) {
+        if (nameBuffers < 0 || nameBuffers > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        name!.buffer = Uint8List(_name_buffers);
+        name!.buffer = Uint8List(nameBuffers);
       }
-      src = src.derive(_name_bufferi);
-      for (int _i = 0; _i < _name_bufferl; _i++) {
-        name!.buffer![_i] = src.dec_ndr_short();
+      src = src.derive(nameBufferi);
+      for (int i = 0; i < nameBufferl; i++) {
+        name!.buffer![i] = src.decNdrShort();
       }
     }
   }
 }
 
-class lsarpc_LsarTransNameArray extends NdrObject {
+class LsarpcTransNameArray extends NdrObject {
   int count = 0;
-  List<lsarpc_LsarTranslatedName>? names;
+  List<LsarpcTranslatedName>? names;
 
   @override
   void encode(NdrBuffer dst) {
     dst.align(4);
-    dst.enc_ndr_long(count);
-    dst.enc_ndr_referent(names, 1);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(names, 1);
 
     if (names != null) {
       dst = dst.deferred;
-      int _namess = count;
-      dst.enc_ndr_long(_namess);
-      int _namesi = dst.index;
-      dst.advance(16 * _namess);
+      int namess = count;
+      dst.encNdrLong(namess);
+      int namesi = dst.index;
+      dst.advance(16 * namess);
 
-      dst = dst.derive(_namesi);
-      for (int _i = 0; _i < _namess; _i++) {
-        names![_i].encode(dst);
+      dst = dst.derive(namesi);
+      for (int i = 0; i < namess; i++) {
+        names![i].encode(dst);
       }
     }
   }
@@ -755,205 +735,189 @@ class lsarpc_LsarTransNameArray extends NdrObject {
   @override
   void decode(NdrBuffer src) {
     src.align(4);
-    count = src.dec_ndr_long();
-    int _namesp = src.dec_ndr_long();
+    count = src.decNdrLong();
+    int namesp = src.decNdrLong();
 
-    if (_namesp != 0) {
+    if (namesp != 0) {
       src = src.deferred;
-      int _namess = src.dec_ndr_long();
-      int _namesi = src.index;
-      src.advance(16 * _namess);
+      int namess = src.decNdrLong();
+      int namesi = src.index;
+      src.advance(16 * namess);
 
       if (names == null) {
-        if (_namess < 0 || _namess > 0xFFFF) {
+        if (namess < 0 || namess > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        names = List.generate(
-            _namess,
-            (index) =>
-                lsarpc_LsarTranslatedName()); //LsarTranslatedName[_namess];
+        names = List.generate(namess, (index) => LsarpcTranslatedName());
       }
-      src = src.derive(_namesi);
-      for (int _i = 0; _i < _namess; _i++) {
-        // if ( names[ _i ] == null ) {
-        //     names[ _i ] = LsarTranslatedName();
-        // }
-        names![_i].decode(src);
+      src = src.derive(namesi);
+      for (int i = 0; i < namess; i++) {
+        names![i].decode(src);
       }
     }
   }
 }
 
-class lsarpc_LsarClose extends DcerpcMessage {
+class LsarpcClose extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x00;
   }
 
   int retval = 0;
-  rpc_policy_handle handle;
+  RpcPolicyHandle handle;
 
-  lsarpc_LsarClose(this.handle);
+  LsarpcClose(this.handle);
 
   @override
-  void encode_in(NdrBuffer buf) {
+  void encodeIn(NdrBuffer buf) {
     handle.encode(buf);
   }
 
   @override
-  void decode_out(NdrBuffer buf) {
+  void decodeOut(NdrBuffer buf) {
     handle.decode(buf);
-    retval = buf.dec_ndr_long();
+    retval = buf.decNdrLong();
   }
 }
 
-class lsarpc_LsarQueryInformationPolicy extends DcerpcMessage {
+class LsarpcQueryInformationPolicy extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x07;
   }
 
   int retval = 0;
-  rpc_policy_handle handle;
+  RpcPolicyHandle handle;
   int level;
   NdrObject info;
 
-  lsarpc_LsarQueryInformationPolicy(this.handle, this.level, this.info); // {
-  //     this.handle = handle;
-  //     this.level = level;
-  //     this.info = info;
-  // }
+  LsarpcQueryInformationPolicy(
+    this.handle,
+    this.level,
+    this.info,
+  );
 
   @override
-  void encode_in(NdrBuffer buf) {
+  void encodeIn(NdrBuffer buf) {
     handle.encode(buf);
-    buf.enc_ndr_short(level);
+    buf.encNdrShort(level);
   }
 
   @override
-  void decode_out(NdrBuffer buf) {
-    int _infop = buf.dec_ndr_long();
-    if (_infop != 0) {
-      buf.dec_ndr_short(); /* union discriminant */
+  void decodeOut(NdrBuffer buf) {
+    int infop = buf.decNdrLong();
+    if (infop != 0) {
+      buf.decNdrShort(); /* union discriminant */
       info.decode(buf);
     }
-    retval = buf.dec_ndr_long();
+    retval = buf.decNdrLong();
   }
 }
 
-class lsarpc_LsarLookupSids extends DcerpcMessage {
+class LsarpcLookupSids extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x0f;
   }
 
   int retval = 0;
-  rpc_policy_handle handle;
-  lsarpc_LsarSidArray sids;
-  lsarpc_LsarRefDomainList? domains;
-  lsarpc_LsarTransNameArray names;
+  RpcPolicyHandle handle;
+  LsarpcSidArray sids;
+  LsarpcRefDomainList? domains;
+  LsarpcTransNameArray names;
   int level;
   int count;
 
-  lsarpc_LsarLookupSids(
-      this.handle, this.sids, this.domains, this.names, this.level, this.count);
-  //     this.handle = handle;
-  //     this.sids = sids;
-  //     this.domains = domains;
-  //     this.names = names;
-  //     this.level = level;
-  //     this.count = count;
-  // }
+  LsarpcLookupSids(
+    this.handle,
+    this.sids,
+    this.domains,
+    this.names,
+    this.level,
+    this.count,
+  );
 
   @override
-  void encode_in(NdrBuffer buf) {
+  void encodeIn(NdrBuffer buf) {
     handle.encode(buf);
     sids.encode(buf);
     names.encode(buf);
-    buf.enc_ndr_short(level);
-    buf.enc_ndr_long(count);
+    buf.encNdrShort(level);
+    buf.encNdrLong(count);
   }
 
   @override
-  void decode_out(NdrBuffer buf) {
-    int _domainsp = buf.dec_ndr_long();
-    if (_domainsp != 0) {
-      domains ??= lsarpc_LsarRefDomainList();
+  void decodeOut(NdrBuffer buf) {
+    int domainsp = buf.decNdrLong();
+    if (domainsp != 0) {
+      domains ??= LsarpcRefDomainList();
       domains!.decode(buf);
     }
     names.decode(buf);
-    count = buf.dec_ndr_long();
-    retval = buf.dec_ndr_long();
+    count = buf.decNdrLong();
+    retval = buf.decNdrLong();
   }
 }
 
-class lsarpc_LsarOpenPolicy2 extends DcerpcMessage {
+class LsarpcOpenPolicy2 extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x2c;
   }
 
   int retval = 0;
-  String? system_name;
-  lsarpc_LsarObjectAttributes object_attributes;
-  int desired_access;
-  rpc_policy_handle policy_handle;
+  String? systemName;
+  LsarpcObjectAttributes objectAttributes;
+  int desiredAccess;
+  RpcPolicyHandle policyHandle;
 
-  lsarpc_LsarOpenPolicy2(this.system_name, this.object_attributes,
-      this.desired_access, this.policy_handle);
-  //     this.system_name = system_name;
-  //     this.object_attributes = object_attributes;
-  //     this.desired_access = desired_access;
-  //     this.policy_handle = policy_handle;
-  // }
+  LsarpcOpenPolicy2(this.systemName, this.objectAttributes, this.desiredAccess,
+      this.policyHandle);
 
   @override
-  void encode_in(NdrBuffer buf) {
-    buf.enc_ndr_referent(system_name, 1);
-    if (system_name != null) {
-      buf.enc_ndr_string(system_name!);
+  void encodeIn(NdrBuffer buf) {
+    buf.encNdrReferent(systemName, 1);
+    if (systemName != null) {
+      buf.encNdrString(systemName!);
     }
-    object_attributes.encode(buf);
-    buf.enc_ndr_long(desired_access);
+    objectAttributes.encode(buf);
+    buf.encNdrLong(desiredAccess);
   }
 
   @override
-  void decode_out(NdrBuffer buf) {
-    policy_handle.decode(buf);
-    retval = buf.dec_ndr_long();
+  void decodeOut(NdrBuffer buf) {
+    policyHandle.decode(buf);
+    retval = buf.decNdrLong();
   }
 }
 
-class lsarpc_LsarQueryInformationPolicy2 extends DcerpcMessage {
+class LsarpcQueryInformationPolicy2 extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x2e;
   }
 
   int retval = 0;
-  rpc_policy_handle handle;
+  RpcPolicyHandle handle;
   int level;
   NdrObject info;
 
-  lsarpc_LsarQueryInformationPolicy2(this.handle, this.level, this.info); // {
-  //     this.handle = handle;
-  //     this.level = level;
-  //     this.info = info;
-  // }
+  LsarpcQueryInformationPolicy2(this.handle, this.level, this.info);
 
   @override
-  void encode_in(NdrBuffer buf) {
+  void encodeIn(NdrBuffer buf) {
     handle.encode(buf);
-    buf.enc_ndr_short(level);
+    buf.encNdrShort(level);
   }
 
   @override
-  void decode_out(NdrBuffer buf) {
-    int _infop = buf.dec_ndr_long();
-    if (_infop != 0) {
-      buf.dec_ndr_short(); /* union discriminant */
+  void decodeOut(NdrBuffer buf) {
+    int infop = buf.decNdrLong();
+    if (infop != 0) {
+      buf.decNdrShort(); /* union discriminant */
       info.decode(buf);
     }
-    retval = buf.dec_ndr_long();
+    retval = buf.decNdrLong();
   }
 }

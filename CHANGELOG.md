@@ -1,3 +1,6 @@
+## 0.0.9 Connect fixes.
+ - Check auth while connect;
+ 
 ## 0.0.8 Add createFolder & bug fixes.
  - Add createFolder operation.
  - Bug fix. Operation listFiles did not close the folder.

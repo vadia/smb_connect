@@ -8,10 +8,10 @@ import 'package:smb_connect/src/utils/strings.dart';
 
 class DcerpcBinding {
   static final Map<String, String> INTERFACES = {
-    "srvsvc": srvsvc_getSyntax(),
-    "lsarpc": lsarpc_getSyntax(),
-    "samr": samr_getSyntax(),
-    "netdfs": netdfs_getSyntax(),
+    "srvsvc": srvsvcGetSyntax(),
+    "lsarpc": lsarpcGetSyntax(),
+    "samr": samrGetSyntax(),
+    "netdfs": netdfsGetSyntax(),
     "netlogon": "12345678-1234-abcd-ef00-01234567cffb:1.0",
     "wkssvc": "6BFFD098-A112-3610-9833-46C3F87E345A:1.0",
     // "samr": "12345778-1234-ABCD-EF00-0123456789AC:1.0",

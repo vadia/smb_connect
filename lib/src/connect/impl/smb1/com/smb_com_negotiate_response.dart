@@ -25,11 +25,12 @@ class SmbComNegotiateResponse extends ServerMessageBlock
   final ServerData _server = ServerData();
   int _negotiatedFlags2 = 0;
   int _maxMpxCount = 0;
-  int _snd_buf_size = 0;
-  int _recv_buf_size = 0;
-  int _tx_buf_size = 0;
+  int _sndBufSize = 0;
+  int _recvBufSize = 0;
+  int _txBufSize = 0;
 
   int capabilities = 0;
+  // ignore: prefer_final_fields
   int _sessionKey = 0x00000000;
   bool _useUnicode = false;
 
@@ -37,9 +38,9 @@ class SmbComNegotiateResponse extends ServerMessageBlock
     capabilities = config.capabilities;
     _negotiatedFlags2 = config.flags2;
     _maxMpxCount = Configuration.maxMpxCount;
-    _snd_buf_size = config.sendBufferSize;
-    _recv_buf_size = config.receiveBufferSize;
-    _tx_buf_size = config.transactionBufferSize;
+    _sndBufSize = config.sendBufferSize;
+    _recvBufSize = config.receiveBufferSize;
+    _txBufSize = config.transactionBufferSize;
     _useUnicode = config.isUseUnicode;
   }
 
@@ -50,7 +51,7 @@ class SmbComNegotiateResponse extends ServerMessageBlock
 
   @override
   int getTransactionBufferSize() {
-    return _tx_buf_size;
+    return _txBufSize;
   }
 
   @override
@@ -59,7 +60,7 @@ class SmbComNegotiateResponse extends ServerMessageBlock
   }
 
   int getNegotiatedSendBufferSize() {
-    return _snd_buf_size;
+    return _sndBufSize;
   }
 
   int getNegotiatedMpxCount() {
@@ -72,12 +73,12 @@ class SmbComNegotiateResponse extends ServerMessageBlock
 
   @override
   int getReceiveBufferSize() {
-    return _recv_buf_size;
+    return _recvBufSize;
   }
 
   @override
   int getSendBufferSize() {
-    return _snd_buf_size;
+    return _sndBufSize;
   }
 
   int getNegotiatedFlags2() {
@@ -129,9 +130,9 @@ class SmbComNegotiateResponse extends ServerMessageBlock
 
     _maxMpxCount = min(_maxMpxCount, _server.smaxMpxCount);
     if (_maxMpxCount < 1) _maxMpxCount = 1;
-    _snd_buf_size = min(_snd_buf_size, _server.maxBufferSize);
-    _recv_buf_size = min(_recv_buf_size, _server.maxBufferSize);
-    _tx_buf_size = min(_tx_buf_size, _server.maxBufferSize);
+    _sndBufSize = min(_sndBufSize, _server.maxBufferSize);
+    _recvBufSize = min(_recvBufSize, _server.maxBufferSize);
+    _txBufSize = min(_txBufSize, _server.maxBufferSize);
 
     capabilities &= _server.scapabilities;
     if ((_server.scapabilities & SmbConstants.CAP_EXTENDED_SECURITY) ==
@@ -175,7 +176,7 @@ class SmbComNegotiateResponse extends ServerMessageBlock
     }
 
     if (req is SmbComTransaction) {
-      req.setMaxBufferSize(_snd_buf_size);
+      req.setMaxBufferSize(_sndBufSize);
     }
   }
 

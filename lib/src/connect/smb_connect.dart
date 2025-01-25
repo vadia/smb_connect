@@ -75,8 +75,8 @@ abstract class SmbConnect {
     } else {
       connect = Smb2Connect(config, transport);
     }
-    // final session = connect.initSession();
-    await connect.listShares();
+    final session = connect.initSession();
+    await session.setup();
 
     if (onDisconnect != null) {
       transport.onDisconnect = (_) {

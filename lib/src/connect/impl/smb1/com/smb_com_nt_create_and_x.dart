@@ -47,7 +47,7 @@ class SmbComNTCreateAndX extends AndXServerMessageBlock
       impersonationLevel = 0;
   int allocationSize = 0;
   int securityFlags = 0;
-  int namelen_index = 0;
+  int namelenIndex = 0;
 
   int flags0 = 0, desiredAccess = 0;
 
@@ -130,7 +130,7 @@ class SmbComNTCreateAndX extends AndXServerMessageBlock
 
     dst[dstIndex++] = 0x00;
     // name length without counting null termination
-    namelen_index = dstIndex;
+    namelenIndex = dstIndex;
     dstIndex += 2;
     SMBUtil.writeInt4(flags0, dst, dstIndex);
     dstIndex += 4;
@@ -160,7 +160,7 @@ class SmbComNTCreateAndX extends AndXServerMessageBlock
     int n;
     n = writeString(path!, dst, dstIndex);
     SMBUtil.writeInt2(
-        (isUseUnicode() ? path!.length * 2 : n), dst, namelen_index);
+        (isUseUnicode() ? path!.length * 2 : n), dst, namelenIndex);
     return n;
   }
 

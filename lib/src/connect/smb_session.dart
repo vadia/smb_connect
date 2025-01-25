@@ -53,5 +53,7 @@ abstract class SmbSession {
     }
   }
 
+  Future<bool> setup();
+
   Future close();
 }

@@ -1,5 +1,3 @@
-// ignore_for_file: unused_element
-
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -118,7 +116,6 @@ extension RandomExtension on Random {
   Uint8List nextBytes(int count) {
     Uint8List res = Uint8List(count);
     for (var i = 0; i < count; i++) {
-      // res.add(nextInt(0xFF));
       res[i] = nextInt(0xFF);
     }
     return res;

@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types, avoid_renaming_method_parameters, no_leading_underscores_for_local_identifiers
-
 import 'package:smb_connect/src/exceptions.dart';
 import 'package:smb_connect/src/dcerpc/dcerpc_message.dart';
 import 'package:smb_connect/src/dcerpc/ndr/ndr_buffer.dart';
@@ -7,505 +5,488 @@ import 'package:smb_connect/src/dcerpc/ndr/ndr_object.dart';
 
 import '../ndr/ndr_long.dart';
 
-String netdfs_getSyntax() {
+String netdfsGetSyntax() {
   return "4fc742e0-4a10-11cf-8273-00aa004ae673:3.0";
 }
 
-class netdfs_DfsInfo1 extends NdrObject {
+class NetDfsInfo1 extends NdrObject {
   static const int DFS_VOLUME_FLAVOR_STANDALONE = 0x100;
   static const int DFS_VOLUME_FLAVOR_AD_BLOB = 0x200;
   static const int DFS_STORAGE_STATE_OFFLINE = 0x0001;
   static const int DFS_STORAGE_STATE_ONLINE = 0x0002;
   static const int DFS_STORAGE_STATE_ACTIVE = 0x0004;
 
-  String? entry_path;
+  String? entryPath;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_referent(entry_path, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrReferent(entryPath, 1);
 
-    if (entry_path != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(entry_path!);
+    if (entryPath != null) {
+      dst = dst.deferred;
+      dst.encNdrString(entryPath!);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    int _entry_pathp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    int entryPathp = src.decNdrLong();
 
-    if (_entry_pathp != 0) {
-      _src = _src.deferred;
-      entry_path = _src.dec_ndr_string();
+    if (entryPathp != 0) {
+      src = src.deferred;
+      entryPath = src.decNdrString();
     }
   }
 }
 
-class netdfs_DfsEnumArray1 extends NdrObject {
+class NetDfsEnumArray1 extends NdrObject {
   int count = 0;
-  List<netdfs_DfsInfo1>? s;
+  List<NetDfsInfo1>? s;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(count);
-    _dst.enc_ndr_referent(s, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(s, 1);
 
     if (s != null) {
-      _dst = _dst.deferred;
-      int _ss = count;
-      _dst.enc_ndr_long(_ss);
-      int _si = _dst.index;
-      _dst.advance(4 * _ss);
+      dst = dst.deferred;
+      int ss = count;
+      dst.encNdrLong(ss);
+      int si = dst.index;
+      dst.advance(4 * ss);
 
-      _dst = _dst.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        s![_i].encode(_dst);
+      dst = dst.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    count = _src.dec_ndr_long();
-    int _sp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    count = src.decNdrLong();
+    int sp = src.decNdrLong();
 
-    if (_sp != 0) {
-      _src = _src.deferred;
-      int _ss = _src.dec_ndr_long();
-      int _si = _src.index;
-      _src.advance(4 * _ss);
+    if (sp != 0) {
+      src = src.deferred;
+      int ss = src.decNdrLong();
+      int si = src.index;
+      src.advance(4 * ss);
 
       if (s == null) {
-        if (_ss < 0 || _ss > 0xFFFF) {
+        if (ss < 0 || ss > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        s = List.generate(
-            _ss, (index) => netdfs_DfsInfo1()); //netdfs_DfsInfo1[_ss];
+        s = List.generate(ss, (index) => NetDfsInfo1());
       }
-      _src = _src.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        // if (s[_i] == null) {
-        //   s[_i] = netdfs_DfsInfo1();
-        // }
-        s![_i].decode(_src);
+      src = src.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].decode(src);
       }
     }
   }
 }
 
-class netdfs_DfsStorageInfo extends NdrObject {
+class NetDfsStorageInfo extends NdrObject {
   int state = 0;
-  String? server_name;
-  String? share_name;
+  String? serverName;
+  String? shareName;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(state);
-    _dst.enc_ndr_referent(server_name, 1);
-    _dst.enc_ndr_referent(share_name, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(state);
+    dst.encNdrReferent(serverName, 1);
+    dst.encNdrReferent(shareName, 1);
 
-    if (server_name != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(server_name!);
+    if (serverName != null) {
+      dst = dst.deferred;
+      dst.encNdrString(serverName!);
     }
-    if (share_name != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(share_name!);
+    if (shareName != null) {
+      dst = dst.deferred;
+      dst.encNdrString(shareName!);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    state = _src.dec_ndr_long();
-    int _server_namep = _src.dec_ndr_long();
-    int _share_namep = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    state = src.decNdrLong();
+    int serverNamep = src.decNdrLong();
+    int shareNamep = src.decNdrLong();
 
-    if (_server_namep != 0) {
-      _src = _src.deferred;
-      server_name = _src.dec_ndr_string();
+    if (serverNamep != 0) {
+      src = src.deferred;
+      serverName = src.decNdrString();
     }
-    if (_share_namep != 0) {
-      _src = _src.deferred;
-      share_name = _src.dec_ndr_string();
+    if (shareNamep != 0) {
+      src = src.deferred;
+      shareName = src.decNdrString();
     }
   }
 }
 
-class netdfs_DfsInfo3 extends NdrObject {
+class NetDfsInfo3 extends NdrObject {
   String? path;
   String? comment;
   int state = 0;
-  int num_stores = 0;
-  List<netdfs_DfsStorageInfo>? stores;
+  int numStores = 0;
+  List<NetDfsStorageInfo>? stores;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_referent(path, 1);
-    _dst.enc_ndr_referent(comment, 1);
-    _dst.enc_ndr_long(state);
-    _dst.enc_ndr_long(num_stores);
-    _dst.enc_ndr_referent(stores, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrReferent(path, 1);
+    dst.encNdrReferent(comment, 1);
+    dst.encNdrLong(state);
+    dst.encNdrLong(numStores);
+    dst.encNdrReferent(stores, 1);
 
     if (path != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(path!);
+      dst = dst.deferred;
+      dst.encNdrString(path!);
     }
     if (comment != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(comment!);
+      dst = dst.deferred;
+      dst.encNdrString(comment!);
     }
     if (stores != null) {
-      _dst = _dst.deferred;
-      int _storess = num_stores;
-      _dst.enc_ndr_long(_storess);
-      int _storesi = _dst.index;
-      _dst.advance(12 * _storess);
+      dst = dst.deferred;
+      int storess = numStores;
+      dst.encNdrLong(storess);
+      int storesi = dst.index;
+      dst.advance(12 * storess);
 
-      _dst = _dst.derive(_storesi);
-      for (int _i = 0; _i < _storess; _i++) {
-        stores![_i].encode(_dst);
+      dst = dst.derive(storesi);
+      for (int i = 0; i < storess; i++) {
+        stores![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    int _pathp = _src.dec_ndr_long();
-    int _commentp = _src.dec_ndr_long();
-    state = _src.dec_ndr_long();
-    num_stores = _src.dec_ndr_long();
-    int _storesp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    int pathp = src.decNdrLong();
+    int commentp = src.decNdrLong();
+    state = src.decNdrLong();
+    numStores = src.decNdrLong();
+    int storesp = src.decNdrLong();
 
-    if (_pathp != 0) {
-      _src = _src.deferred;
-      path = _src.dec_ndr_string();
+    if (pathp != 0) {
+      src = src.deferred;
+      path = src.decNdrString();
     }
-    if (_commentp != 0) {
-      _src = _src.deferred;
-      comment = _src.dec_ndr_string();
+    if (commentp != 0) {
+      src = src.deferred;
+      comment = src.decNdrString();
     }
-    if (_storesp != 0) {
-      _src = _src.deferred;
-      int _storess = _src.dec_ndr_long();
-      int _storesi = _src.index;
-      _src.advance(12 * _storess);
+    if (storesp != 0) {
+      src = src.deferred;
+      int storess = src.decNdrLong();
+      int storesi = src.index;
+      src.advance(12 * storess);
 
       if (stores == null) {
-        if (_storess < 0 || _storess > 0xFFFF) {
+        if (storess < 0 || storess > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        stores = List.generate(
-            _storess,
-            (index) =>
-                netdfs_DfsStorageInfo()); // netdfs_DfsStorageInfo[_storess];
+        stores = List.generate(storess, (index) => NetDfsStorageInfo());
       }
-      _src = _src.derive(_storesi);
-      for (int _i = 0; _i < _storess; _i++) {
-        // if (stores[_i] == null) {
-        //   stores[_i] = netdfs_DfsStorageInfo();
-        // }
-        stores![_i].decode(_src);
+      src = src.derive(storesi);
+      for (int i = 0; i < storess; i++) {
+        stores![i].decode(src);
       }
     }
   }
 }
 
-class netdfs_DfsEnumArray3 extends NdrObject {
+class NetDfsEnumArray3 extends NdrObject {
   int count = 0;
-  List<netdfs_DfsInfo3>? s;
+  List<NetDfsInfo3>? s;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(count);
-    _dst.enc_ndr_referent(s, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(s, 1);
 
     if (s != null) {
-      _dst = _dst.deferred;
-      int _ss = count;
-      _dst.enc_ndr_long(_ss);
-      int _si = _dst.index;
-      _dst.advance(20 * _ss);
+      dst = dst.deferred;
+      int ss = count;
+      dst.encNdrLong(ss);
+      int si = dst.index;
+      dst.advance(20 * ss);
 
-      _dst = _dst.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        s![_i].encode(_dst);
+      dst = dst.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    count = _src.dec_ndr_long();
-    int _sp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    count = src.decNdrLong();
+    int sp = src.decNdrLong();
 
-    if (_sp != 0) {
-      _src = _src.deferred;
-      int _ss = _src.dec_ndr_long();
-      int _si = _src.index;
-      _src.advance(20 * _ss);
+    if (sp != 0) {
+      src = src.deferred;
+      int ss = src.decNdrLong();
+      int si = src.index;
+      src.advance(20 * ss);
 
       if (s == null) {
-        if (_ss < 0 || _ss > 0xFFFF) {
+        if (ss < 0 || ss > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        s = List.generate(
-            _ss, (index) => netdfs_DfsInfo3()); // netdfs_DfsInfo3[_ss];
+        s = List.generate(ss, (index) => NetDfsInfo3());
       }
-      _src = _src.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        // if (s[_i] == null) {
-        //   s[_i] = netdfs_DfsInfo3();
-        // }
-        s![_i].decode(_src);
+      src = src.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].decode(src);
       }
     }
   }
 }
 
-class netdfs_DfsInfo200 extends NdrObject {
-  String? dfs_name;
+class NetDfsInfo200 extends NdrObject {
+  String? dfsName;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_referent(dfs_name, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrReferent(dfsName, 1);
 
-    if (dfs_name != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(dfs_name!);
+    if (dfsName != null) {
+      dst = dst.deferred;
+      dst.encNdrString(dfsName!);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    int _dfs_namep = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    int dfsNamep = src.decNdrLong();
 
-    if (_dfs_namep != 0) {
-      _src = _src.deferred;
-      dfs_name = _src.dec_ndr_string();
+    if (dfsNamep != 0) {
+      src = src.deferred;
+      dfsName = src.decNdrString();
     }
   }
 }
 
-class netdfs_DfsEnumArray200 extends NdrObject {
+class NetDfsEnumArray200 extends NdrObject {
   int count = 0;
-  List<netdfs_DfsInfo200>? s;
+  List<NetDfsInfo200>? s;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(count);
-    _dst.enc_ndr_referent(s, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(s, 1);
 
     if (s != null) {
-      _dst = _dst.deferred;
-      int _ss = count;
-      _dst.enc_ndr_long(_ss);
-      int _si = _dst.index;
-      _dst.advance(4 * _ss);
+      dst = dst.deferred;
+      int ss = count;
+      dst.encNdrLong(ss);
+      int si = dst.index;
+      dst.advance(4 * ss);
 
-      _dst = _dst.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        s![_i].encode(_dst);
+      dst = dst.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    count = _src.dec_ndr_long();
-    int _sp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    count = src.decNdrLong();
+    int sp = src.decNdrLong();
 
-    if (_sp != 0) {
-      _src = _src.deferred;
-      int _ss = _src.dec_ndr_long();
-      int _si = _src.index;
-      _src.advance(4 * _ss);
+    if (sp != 0) {
+      src = src.deferred;
+      int ss = src.decNdrLong();
+      int si = src.index;
+      src.advance(4 * ss);
 
       if (s == null) {
-        if (_ss < 0 || _ss > 0xFFFF) {
+        if (ss < 0 || ss > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        s = List.generate(
-            _ss, (index) => netdfs_DfsInfo200()); // netdfs_DfsInfo200[_ss];
+        s = List.generate(ss, (index) => NetDfsInfo200());
       }
-      _src = _src.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        // if (s[_i] == null) {
-        //   s[_i] = netdfs_DfsInfo200();
-        // }
-        s![_i].decode(_src);
+      src = src.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].decode(src);
       }
     }
   }
 }
 
-class netdfs_DfsInfo300 extends NdrObject {
+class NetDfsInfo300 extends NdrObject {
   int flags = 0;
-  String? dfs_name;
+  String? dfsName;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(flags);
-    _dst.enc_ndr_referent(dfs_name, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(flags);
+    dst.encNdrReferent(dfsName, 1);
 
-    if (dfs_name != null) {
-      _dst = _dst.deferred;
-      _dst.enc_ndr_string(dfs_name!);
+    if (dfsName != null) {
+      dst = dst.deferred;
+      dst.encNdrString(dfsName!);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    flags = _src.dec_ndr_long();
-    int _dfs_namep = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    flags = src.decNdrLong();
+    int dfsNamep = src.decNdrLong();
 
-    if (_dfs_namep != 0) {
-      _src = _src.deferred;
-      dfs_name = _src.dec_ndr_string();
+    if (dfsNamep != 0) {
+      src = src.deferred;
+      dfsName = src.decNdrString();
     }
   }
 }
 
-class netdfs_DfsEnumArray300 extends NdrObject {
+class NetDfsEnumArray300 extends NdrObject {
   int count = 0;
-  List<netdfs_DfsInfo300>? s;
+  List<NetDfsInfo300>? s;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(count);
-    _dst.enc_ndr_referent(s, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(count);
+    dst.encNdrReferent(s, 1);
 
     if (s != null) {
-      _dst = _dst.deferred;
-      int _ss = count;
-      _dst.enc_ndr_long(_ss);
-      int _si = _dst.index;
-      _dst.advance(8 * _ss);
+      dst = dst.deferred;
+      int ss = count;
+      dst.encNdrLong(ss);
+      int si = dst.index;
+      dst.advance(8 * ss);
 
-      _dst = _dst.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        s![_i].encode(_dst);
+      dst = dst.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].encode(dst);
       }
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    count = _src.dec_ndr_long();
-    int _sp = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    count = src.decNdrLong();
+    int sp = src.decNdrLong();
 
-    if (_sp != 0) {
-      _src = _src.deferred;
-      int _ss = _src.dec_ndr_long();
-      int _si = _src.index;
-      _src.advance(8 * _ss);
+    if (sp != 0) {
+      src = src.deferred;
+      int ss = src.decNdrLong();
+      int si = src.index;
+      src.advance(8 * ss);
 
       if (s == null) {
-        if (_ss < 0 || _ss > 0xFFFF) {
+        if (ss < 0 || ss > 0xFFFF) {
           throw NdrException(NdrException.INVALID_CONFORMANCE);
         }
-        s = List.generate(
-            _ss, (index) => netdfs_DfsInfo300()); // netdfs_DfsInfo300[_ss];
+        s = List.generate(ss, (index) => NetDfsInfo300());
       }
-      _src = _src.derive(_si);
-      for (int _i = 0; _i < _ss; _i++) {
-        // if (s[_i] == null) {
-        //   s[_i] = netdfs_DfsInfo300();
-        // }
-        s![_i].decode(_src);
+      src = src.derive(si);
+      for (int i = 0; i < ss; i++) {
+        s![i].decode(src);
       }
     }
   }
 }
 
-class netdfs_DfsEnumStruct extends NdrObject {
+class NetDfsEnumStruct extends NdrObject {
   int level = 0;
   NdrObject? e;
 
   @override
-  void encode(NdrBuffer _dst) {
-    _dst.align(4);
-    _dst.enc_ndr_long(level);
-    int _descr = level;
-    _dst.enc_ndr_long(_descr);
-    _dst.enc_ndr_referent(e, 1);
+  void encode(NdrBuffer dst) {
+    dst.align(4);
+    dst.encNdrLong(level);
+    int descr = level;
+    dst.encNdrLong(descr);
+    dst.encNdrReferent(e, 1);
 
     if (e != null) {
-      _dst = _dst.deferred;
-      e!.encode(_dst);
+      dst = dst.deferred;
+      e!.encode(dst);
     }
   }
 
   @override
-  void decode(NdrBuffer _src) {
-    _src.align(4);
-    level = _src.dec_ndr_long();
-    _src.dec_ndr_long(); /* union discriminant */
-    int _ep = _src.dec_ndr_long();
+  void decode(NdrBuffer src) {
+    src.align(4);
+    level = src.decNdrLong();
+    src.decNdrLong(); /* union discriminant */
+    int ep = src.decNdrLong();
 
-    if (_ep != 0) {
-      e ??= netdfs_DfsEnumArray1();
-      _src = _src.deferred;
-      e!.decode(_src);
+    if (ep != 0) {
+      e ??= NetDfsEnumArray1();
+      src = src.deferred;
+      e!.decode(src);
     }
   }
 }
 
-class netdfs_NetrDfsEnumEx extends DcerpcMessage {
+class NetdfsNetrDfsEnumEx extends DcerpcMessage {
   @override
   int getOpnum() {
     return 0x15;
   }
 
   int retval = 0;
-  String? dfs_name;
+  String? dfsName;
   int level = 0;
   int prefmaxlen;
-  netdfs_DfsEnumStruct? info;
+  NetDfsEnumStruct? info;
   NdrLong? totalentries;
 
-  netdfs_NetrDfsEnumEx(
-      this.dfs_name, this.level, this.prefmaxlen, this.info, this.totalentries);
+  NetdfsNetrDfsEnumEx(
+    this.dfsName,
+    this.level,
+    this.prefmaxlen,
+    this.info,
+    this.totalentries,
+  );
 
   @override
-  void encode_in(NdrBuffer _dst) {
-    _dst.enc_ndr_string(dfs_name!);
-    _dst.enc_ndr_long(level);
-    _dst.enc_ndr_long(prefmaxlen);
-    _dst.enc_ndr_referent(info, 1);
-    info!.encode(_dst);
-    _dst.enc_ndr_referent(totalentries, 1);
-    totalentries?.encode(_dst);
+  void encodeIn(NdrBuffer buf) {
+    buf.encNdrString(dfsName!);
+    buf.encNdrLong(level);
+    buf.encNdrLong(prefmaxlen);
+    buf.encNdrReferent(info, 1);
+    info!.encode(buf);
+    buf.encNdrReferent(totalentries, 1);
+    totalentries?.encode(buf);
   }
 
   @override
-  void decode_out(NdrBuffer _src) {
-    int _infop = _src.dec_ndr_long();
-    if (_infop != 0) {
-      info ??= netdfs_DfsEnumStruct();
-      info!.decode(_src);
+  void decodeOut(NdrBuffer buf) {
+    int infop = buf.decNdrLong();
+    if (infop != 0) {
+      info ??= NetDfsEnumStruct();
+      info!.decode(buf);
     }
-    int _totalentriesp = _src.dec_ndr_long();
-    if (_totalentriesp != 0) {
-      totalentries!.decode(_src);
+    int totalentriesp = buf.decNdrLong();
+    if (totalentriesp != 0) {
+      totalentries!.decode(buf);
     }
-    retval = _src.dec_ndr_long();
+    retval = buf.decNdrLong();
   }
 }

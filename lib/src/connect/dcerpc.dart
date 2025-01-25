@@ -40,7 +40,7 @@ abstract class DcerpcBase {
   static const int pipeFlags =
       (0x2019F << 16) | PIPE_TYPE_RDWR | PIPE_TYPE_DCE_TRANSACT;
   static const int pipeAccess = (pipeFlags & 7) | 0x20000;
-  static const max_recv = 4280;
+  static const maxRecv = 4280;
 
   final SmbTransport transport;
   final SmbTree tree;
@@ -54,7 +54,6 @@ abstract class DcerpcBase {
     _state = DcerpcState.binding;
     var url =
         "ncacn_np:${transport.host}[endpoint=\\PIPE\\srvsvc,address=${transport.host}]";
-    // var url = "ncacn_np:${loc.getServer()}[endpoint=${ep},address=${address.getHostAddress()}]"
     DcerpcMessage bind = DcerpcBind(binding: parseBinding(url));
     await sendrecv(bind);
   }
@@ -68,7 +67,7 @@ abstract class DcerpcBase {
 
     NdrBuffer buf = NdrBuffer(out, 0);
     msg.flags = 3;
-    msg.call_id = _msgNum.incrementAndGet();
+    msg.callId = _msgNum.incrementAndGet();
     msg.encode(buf);
     // int off = 0;
     // int length = msg.length;
@@ -79,7 +78,7 @@ abstract class DcerpcBase {
       NdrBuffer hdrBuf = NdrBuffer(inB, 0);
       _setupReceivedFragment(hdrBuf);
       hdrBuf.index = 0;
-      msg.decode_header(hdrBuf);
+      msg.decodeHeader(hdrBuf);
     }
 
     NdrBuffer msgBuf;
@@ -94,30 +93,29 @@ abstract class DcerpcBase {
 
   Uint8List _receiveMoreFragments(DcerpcMessage msg, Uint8List inp) {
     int off = msg.ptype == 2 ? msg.length : 24;
-    Uint8List fragBytes = Uint8List(max_recv);
+    Uint8List fragBytes = Uint8List(maxRecv);
     NdrBuffer fragBuf = NdrBuffer(fragBytes, 0);
     while (!msg.isFlagSet(DcerpcConstants.DCERPC_LAST_FRAG)) {
       // doReceiveFragment(fragBytes);
       _setupReceivedFragment(fragBuf);
       fragBuf.reset();
-      msg.decode_header(fragBuf);
-      int stub_frag_len = msg.length - 24;
-      if ((off + stub_frag_len) > inp.length) {
-        // shouldn't happen if alloc_hint is correct or greater
-        Uint8List tmp = Uint8List(off + stub_frag_len);
+      msg.decodeHeader(fragBuf);
+      int stubFragLen = msg.length - 24;
+      if ((off + stubFragLen) > inp.length) {
+        // shouldn't happen if allochint is correct or greater
+        Uint8List tmp = Uint8List(off + stubFragLen);
         // System.arraycopy(inp, 0, tmp, 0, off);
         byteArrayCopy(
             src: inp, srcOffset: 0, dst: tmp, dstOffset: 0, length: off);
         inp = tmp;
       }
-      // System.arraycopy(fragBytes, 24, inp, off, stub_frag_len);
       byteArrayCopy(
           src: fragBytes,
           srcOffset: 24,
           dst: inp,
           dstOffset: off,
-          length: stub_frag_len);
-      off += stub_frag_len;
+          length: stubFragLen);
+      off += stubFragLen;
     }
     return inp;
   }
@@ -128,7 +126,7 @@ abstract class DcerpcBase {
   void _setupReceivedFragment(NdrBuffer fbuf) {
     fbuf.reset();
     fbuf.index = 8;
-    fbuf.setLength(fbuf.dec_ndr_short());
+    fbuf.setLength(fbuf.decNdrShort());
   }
 
   static DcerpcBinding parseBinding(String str) {

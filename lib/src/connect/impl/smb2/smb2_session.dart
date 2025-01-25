@@ -24,6 +24,7 @@ class Smb2Session extends SmbSession {
     await transport.sendrecv(logoffReq);
   }
 
+  @override
   Future<bool> setup() async {
     var res = await transport.ensureConnected();
     if (!res) {

@@ -20,16 +20,16 @@ class NtlmUtil {
     int avPairsLength = avPairs != null ? avPairs.length : 0;
     Uint8List temp = Uint8List(28 + avPairsLength + 4);
 
-    Encdec.enc_uint32le(0x00000101, temp, 0); // Header
-    Encdec.enc_uint32le(0x00000000, temp, 4); // Reserved
-    Encdec.enc_uint64le(nanos1601, temp, 8);
+    Encdec.encUint32LE(0x00000101, temp, 0); // Header
+    Encdec.encUint32LE(0x00000000, temp, 4); // Reserved
+    Encdec.encUint64LE(nanos1601, temp, 8);
     byteArrayCopy(
         src: clientChallenge,
         srcOffset: 0,
         dst: temp,
         dstOffset: 16,
         length: 8);
-    Encdec.enc_uint32le(0x00000000, temp, 24); // Unknown
+    Encdec.encUint32LE(0x00000000, temp, 24); // Unknown
     if (avPairs != null) {
       byteArrayCopy(
           src: avPairs,
@@ -38,7 +38,7 @@ class NtlmUtil {
           dstOffset: 28,
           length: avPairsLength);
     }
-    Encdec.enc_uint32le(0x00000000, temp, 28 + avPairsLength); // mystery bytes!
+    Encdec.encUint32LE(0x00000000, temp, 28 + avPairsLength); // mystery bytes!
 
     return NtlmUtil.computeResponse(
         responseKeyNT, serverChallenge, temp, 0, temp.length);

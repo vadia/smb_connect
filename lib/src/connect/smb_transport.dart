@@ -65,6 +65,7 @@ class SmbTransport {
   late SocketWriter _out;
 
   late final bool _signingEnforced;
+  // ignore: prefer_final_fields
   int _desiredCredits = 512;
   final Semaphore _credits = Semaphore(1, true);
   SmbNegotiationResponse? _negotiated;
@@ -318,7 +319,7 @@ class SmbTransport {
       _mid.set(1);
     }
     int n = req.encode(_sbuf, 4);
-    Encdec.enc_uint32be(n & 0xFFFF, _sbuf, 0);
+    Encdec.encUint32BE(n & 0xFFFF, _sbuf, 0);
 
     /// 4 int ssn msg header */
     _out.write(_sbuf, 0, 4 + n);
@@ -334,7 +335,7 @@ class SmbTransport {
       /// try to read header */
       throw "transport closed in negotiate"; //IOException("transport closed in negotiate")
     }
-    int size = Encdec.dec_uint16be(_sbuf, 2) & 0xFFFF;
+    int size = Encdec.decUint16BE(_sbuf, 2) & 0xFFFF;
     if (size < 33 || (4 + size) > _sbuf.length) {
       throw "Invalid payload size: $size"; //IOException("Invalid payload size: $size")
     }
@@ -444,7 +445,7 @@ class SmbTransport {
             lenDiff) {
           return null;
         }
-        return Encdec.dec_uint64le(_sbuf, 28);
+        return Encdec.decUint64LE(_sbuf, 28);
       }
 
       if (_sbuf[0] == 0x00 &&
@@ -478,7 +479,7 @@ class SmbTransport {
     /// should call doRecv(). Therefore it is ok to expect that the data
     /// in sbuf will be preserved for copying into BUF in doRecv().
 
-    return Encdec.dec_uint16le(_sbuf, 34) & 0xFFFF;
+    return Encdec.decUint16LE(_sbuf, 34) & 0xFFFF;
   }
 
   int _getRequestSecurityMode(Smb2NegotiateResponse? first) {
@@ -690,7 +691,7 @@ class SmbTransport {
       // synchronize around encode and write so that the ordering for
       // SMB1 signing can be maintained
       int n = smb.encode(buffer, 4);
-      Encdec.enc_uint32be(
+      Encdec.encUint32BE(
           n & 0xFFFF, buffer, 0); /* 4 byte session message header */
       //
       // For some reason this can sometimes get broken up into another
@@ -729,7 +730,7 @@ class SmbTransport {
 
   Future<void> _doRecvSMB2(CommonServerMessageBlock response) async {
     int size =
-        (Encdec.dec_uint16be(_sbuf, 2) & 0xFFFF) | (_sbuf[1] & 0xFF) << 16;
+        (Encdec.decUint16BE(_sbuf, 2) & 0xFFFF) | (_sbuf[1] & 0xFF) << 16;
     if (size < (Smb2Constants.SMB2_HEADER_LENGTH + 1)) {
       throw SmbIOException("Invalid payload size: $size");
     }
@@ -743,7 +744,7 @@ class SmbTransport {
       throw SmbIOException("Houston we have a synchronization problem");
     }
 
-    int nextCommand = Encdec.dec_uint32le(_sbuf, 4 + 20);
+    int nextCommand = Encdec.decUint32LE(_sbuf, 4 + 20);
     int maximumBufferSize = config.maximumBufferSize;
     int msgSize = nextCommand != 0 ? nextCommand : size;
     if (msgSize > maximumBufferSize) {
@@ -785,7 +786,7 @@ class SmbTransport {
 
         // read next header
         await readn(_inp, buffer, 0, Smb2Constants.SMB2_HEADER_LENGTH);
-        nextCommand = Encdec.dec_uint32le(buffer, 20);
+        nextCommand = Encdec.decUint32LE(buffer, 20);
 
         if ((nextCommand != 0 && nextCommand > maximumBufferSize) ||
             (nextCommand == 0 && size > maximumBufferSize)) {
@@ -822,12 +823,12 @@ class SmbTransport {
         dstOffset: 0,
         length: 4 + SmbConstants.SMB1_HEADER_LENGTH,
       );
-      int size = (Encdec.dec_uint16be(buffer, 2) & 0xFFFF);
+      int size = (Encdec.decUint16BE(buffer, 2) & 0xFFFF);
       if (size < (SmbConstants.SMB1_HEADER_LENGTH + 1) ||
           (4 + size) > min(0xFFFF, config.maximumBufferSize)) {
         throw SmbIOException("Invalid payload size: $size");
       }
-      int errorCode = Encdec.dec_uint32le(buffer, 9) & 0xFFFFFFFF;
+      int errorCode = Encdec.decUint32LE(buffer, 9) & 0xFFFFFFFF;
       if (resp.getCommand() == SmbComConstants.SMB_COM_READ_ANDX &&
           (errorCode == 0 || errorCode == NtStatus.NT_STATUS_BUFFER_OVERFLOW)) {
         // overflow indicator normal for pipe

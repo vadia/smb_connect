@@ -8,11 +8,11 @@ class NdrSmall extends NdrObject {
 
   @override
   void encode(NdrBuffer dst) {
-    dst.enc_ndr_small(value);
+    dst.encNdrSmall(value);
   }
 
   @override
   void decode(NdrBuffer src) {
-    value = src.dec_ndr_small();
+    value = src.decNdrSmall();
   }
 }

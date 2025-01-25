@@ -57,7 +57,7 @@ class Dcerpc {
 
     msg.flags =
         DcerpcConstants.DCERPC_FIRST_FRAG | DcerpcConstants.DCERPC_LAST_FRAG;
-    msg.call_id = callId.incrementAndGet();
+    msg.callId = callId.incrementAndGet();
 
     msg.encode(buf);
 
